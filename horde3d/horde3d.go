@@ -802,14 +802,78 @@ func H3dSetNodeTransform(node H3DNode, tx float32, ty float32, tz float32,
 		C.float(rx), C.float(ry), C.float(rz), C.float(sx), C.float(sy), C.float(sz))
 }
 
-//func H3dGetNodeTransMats(node H3DNode, relMat []float32, absMat []float32) {
-//TODO: Handle nil pointers, possibly check for nil
-//	relMatHead := (*reflect.SliceHeader)((unsafe.Pointer(&relMat)))
-//	absMatHead := (*reflect.SliceHeader)((unsafe.Pointer(&absMat)))
+func H3dGetNodeTransMats(node H3DNode, relMat [][]float32, absMat [][]float32) {
+	//TODO: Handle nil pointers, possibly check for nil
+	//TODO: Test this.  These pointers to pointers to pointers, kind of break my head.
+	//  not sure if this is going to work.
+	C.h3dGetNodeTransMats(C.H3DNode(node), (**C.float)(unsafe.Pointer(&relMat[0])),
+		(**C.float)(unsafe.Pointer(&absMat[0])))
+}
 
-//	C.h3dGetNodeTransMats(C.H3DNode(node), unsafe.Pointer(relMatHead.Data), unsafe.Pointer(absMatHead.Data))
-//}
+func H3dSetNodeTransMat(node H3DNode, mat4x4 []float32) {
+	C.h3dSetNodeTransMat(C.H3DNode(node), (*C.float)(unsafe.Pointer(&mat4x4[0])))
+}
 
-//func H3dSetNodeTransMat(node H3DNode, mat4x4 []float32) {
+func H3dGetNodeParamI(node H3DNode, param int) int {
+	return int(C.h3dGetNodeParamI(C.H3DNode(node), C.int(param)))
+}
 
-//}
+func H3dSetNodeParamI(node H3DNode, param int, value int) {
+	C.h3dSetNodeParamI(C.H3DNode(node), C.int(param), C.int(value))
+}
+
+func H3dGetNodeParamF(node H3DNode, param int, compIdx int) float32 {
+	return float32(C.h3dGetNodeParamF(C.H3DNode(node), C.int(param), C.int(compIdx)))
+}
+
+func H3dSetNodeParamF(node H3DNode, param int, compIdx int, value float32) {
+	C.h3dSetNodeParamF(C.H3DNode(node), C.int(param), C.int(compIdx), C.float(value))
+}
+
+func H3dGetNodeParamStr(node H3DNode, param int) string {
+	value := C.h3dGetNodeParamStr(C.H3DNode(node), C.int(param))
+	defer C.free(unsafe.Pointer(value))
+	return C.GoString(value)
+}
+
+func H3dSetNodeParamStr(node H3DNode, param int, value string) {
+	cValue := C.CString(value)
+	C.free(unsafe.Pointer(cValue))
+	C.h3dSetNodeParamStr(C.H3DNode(node), C.int(param), cValue)
+}
+
+func H3dGetNodeFlags(node H3DNode) int {
+	return int(C.h3dGetNodeFlags(C.H3DNode(node)))
+}
+
+func H3dSetNodeFlags(node H3DNode, flags int, recursive bool) {
+	C.h3dSetNodeFlags(C.H3DNode(node), C.int(flags), Int[recursive])
+}
+
+func H3dGetNodeAABB(node H3DNode, minX *float32, minY *float32, minZ *float32,
+	maxX *float32, maxY *float32, maxZ *float32) {
+	C.h3dGetNodeAABB(C.H3DNode(node), (*C.float)(unsafe.Pointer(minX)),
+		(*C.float)(unsafe.Pointer(minY)), (*C.float)(unsafe.Pointer(minZ)),
+		(*C.float)(unsafe.Pointer(maxX)), (*C.float)(unsafe.Pointer(maxY)),
+		(*C.float)(unsafe.Pointer(maxZ)))
+}
+
+func H3dFindNodes(node H3DNode, name string, nodeType int) int {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	return int(C.h3dFindNodes(C.H3DNode(node), cName, C.int(nodeType)))
+}
+
+func H3dGetNodeFindResult(index int) H3DNode {
+	return H3DNode(C.h3dGetNodeFindResult(C.int(index)))
+}
+
+func H3dCastRay(node H3DNode, ox float32, oy float32, oz float32,
+	dx float32, dy float32, dz float32, numNearest int) int {
+	return int(C.h3dCastRay(C.H3DNode(node), C.float(ox), C.float(oy), C.float(oz),
+		C.float(dx), C.float(dy), C.float(dz), C.int(numNearest)))
+}
+
+func H3dGetCastRayResult(index int, node *H3DNode, distance *float32, intersection []float32) bool {
+
+}
