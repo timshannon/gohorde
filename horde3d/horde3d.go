@@ -7,7 +7,6 @@ package horde3d
 */
 import "C"
 import "unsafe"
-import "reflect"
 
 //typedef int H3DRes;
 //typedef int H3DNode;
@@ -704,6 +703,8 @@ func H3dMapResStream(res H3DRes, elem int, elemIdx int, stream int, read bool, w
 	cStream := C.h3dMapResStream(C.H3DRes(res), C.int(elem), C.int(elemIdx), C.int(stream),
 		Int[read], Int[write])
 
+	C.free(cStream)
+
 	return C.GoBytes(unsafe.Pointer(cStream), C.int(size))
 }
 
@@ -748,16 +749,20 @@ func H3dResizePipelineBuffers(pipeRes H3DRes, width int, height int) {
 }
 
 func H3dGetRenderTargetData(pipelineRes H3DRes, targetName string, bufIndex int, width *int,
-	height *int, compCount *int, dataBuffer []byte) bool {
+	height *int, compCount *int, dataBuffer []byte, bufferSize int) bool {
 	cTargetName := C.CString(targetName)
 	defer C.free(unsafe.Pointer(cTargetName))
 	//TODO: Not sure if this is correct, or how Go's GC will handle it
+	//slcHead := (*reflect.SliceHeader)((unsafe.Pointer(&dataBuffer)))
 
-	slcHead := (*reflect.SliceHeader)((unsafe.Pointer(&dataBuffer)))
-
-	return Bool[int(C.h3dGetRenderTargetData(C.H3DRes(pipelineRes), cTargetName,
+	var cDataBuffer unsafe.Pointer
+	defer C.free(cDataBuffer)
+	var targetFound bool
+	targetFound = Bool[int(C.h3dGetRenderTargetData(C.H3DRes(pipelineRes), cTargetName,
 		C.int(bufIndex), (*C.int)(unsafe.Pointer(width)), (*C.int)(unsafe.Pointer(height)),
-		(*C.int)(unsafe.Pointer(compCount)), unsafe.Pointer(slcHead.Data), C.int(len(dataBuffer))))]
+		(*C.int)(unsafe.Pointer(compCount)), cDataBuffer, C.int(bufferSize)))]
+	dataBuffer = C.GoBytes(cDataBuffer, C.int(bufferSize))
+	return targetFound
 }
 
 func H3dGetNodeType(node H3DNode) int {
@@ -804,10 +809,24 @@ func H3dSetNodeTransform(node H3DNode, tx float32, ty float32, tz float32,
 
 func H3dGetNodeTransMats(node H3DNode, relMat [][]float32, absMat [][]float32) {
 	//TODO: Handle nil pointers, possibly check for nil
-	//TODO: Test this.  These pointers to pointers to pointers, kind of break my head.
-	//  not sure if this is going to work.
-	C.h3dGetNodeTransMats(C.H3DNode(node), (**C.float)(unsafe.Pointer(&relMat[0])),
-		(**C.float)(unsafe.Pointer(&absMat[0])))
+	//TODO: properly handle the copy of the matrix data into a go array
+	var cRelMat unsafe.Pointer
+	var cAbsmat unsafe.Pointer
+
+	defer C.free(cRelMat)
+	defer C.free(cAbsmat)
+	C.h3dGetNodeTransMats(C.H3DNode(node), (**C.float)(cRelMat),
+		(**C.float)(cAbsmat))
+	//reslice go slices properly
+	relMat = relMat[0:4]
+	absMat = absMat[0:4]
+	//convert C array of arrays to Go slice of slices
+	relMatI := C.GoBytes(cRelMat, C.int(4))
+	absMatI := C.GoBytes(cAbsmat, C.int(4))
+	for i := 0; i < 4; i++ {
+		fltArr := C.GoBytes(unsafe.Pointer(relMatI[i]), 4)
+		relMat[i] = fltArr
+	}
 }
 
 func H3dSetNodeTransMat(node H3DNode, mat4x4 []float32) {
@@ -874,6 +893,6 @@ func H3dCastRay(node H3DNode, ox float32, oy float32, oz float32,
 		C.float(dx), C.float(dy), C.float(dz), C.int(numNearest)))
 }
 
-func H3dGetCastRayResult(index int, node *H3DNode, distance *float32, intersection []float32) bool {
-
-}
+//func H3dGetCastRayResult(index int, node *H3DNode, distance *float32, intersection []float32) bool {
+//
+//}
