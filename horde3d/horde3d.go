@@ -527,6 +527,7 @@ const (
 )
 
 //used for bools from c interfaces
+// I'm sure there's a better way to do this, but this works for now
 var Bool = map[int]bool{
 	0: false,
 	1: true,
@@ -538,7 +539,6 @@ var Int = map[bool]C.int{
 
 func H3dGetVersionString() string {
 	verPointer := C.h3dGetVersionString()
-	//is this needed?
 	defer C.free(unsafe.Pointer(verPointer))
 
 	return C.GoString(verPointer)
@@ -593,7 +593,7 @@ func H3dGetStat(param int, reset bool) float32 {
 	return float32(C.h3dGetStat(C.int(param), Int[reset]))
 }
 
-func H3dShowOverlays(verts *float32,
+func H3dShowOverlays(verts []float32,
 	vertCount int,
 	colR float32,
 	colG float32,
@@ -601,7 +601,8 @@ func H3dShowOverlays(verts *float32,
 	colA float32,
 	materialRes H3DRes,
 	flags int) {
-	C.h3dShowOverlays((*C.float)(unsafe.Pointer(verts)),
+
+	C.h3dShowOverlays((*C.float)(unsafe.Pointer(&verts[0])),
 		C.int(vertCount),
 		C.float(colR),
 		C.float(colG),
@@ -648,8 +649,8 @@ func H3dIsResLoaded(res H3DRes) bool {
 }
 
 func H3dLoadResource(res H3DRes, data *string, size int) bool {
+	//TODO: Can I use a data []byte instead?
 	return Bool[int(C.h3dLoadResource(C.H3DRes(res), (*C.char)(unsafe.Pointer(data)), C.int(size)))]
-
 }
 
 func H3dUnloadResource(res H3DRes) {
@@ -807,9 +808,9 @@ func H3dSetNodeTransform(node H3DNode, tx float32, ty float32, tz float32,
 		C.float(rx), C.float(ry), C.float(rz), C.float(sx), C.float(sy), C.float(sz))
 }
 
-func H3dGetNodeTransMats(node H3DNode, relMat [][]float32, absMat [][]float32) {
+func H3dGetNodeTransMats(node H3DNode, relMat []float32, absMat []float32) {
 	//TODO: Handle nil pointers, possibly check for nil
-	//TODO: properly handle the copy of the matrix data into a go array
+	//TODO: Fix this by handling the arrays properly
 	var cRelMat unsafe.Pointer
 	var cAbsmat unsafe.Pointer
 
@@ -817,16 +818,6 @@ func H3dGetNodeTransMats(node H3DNode, relMat [][]float32, absMat [][]float32) {
 	defer C.free(cAbsmat)
 	C.h3dGetNodeTransMats(C.H3DNode(node), (**C.float)(cRelMat),
 		(**C.float)(cAbsmat))
-	//reslice go slices properly
-	relMat = relMat[0:4]
-	absMat = absMat[0:4]
-	//convert C array of arrays to Go slice of slices
-	relMatI := C.GoBytes(cRelMat, C.int(4))
-	absMatI := C.GoBytes(cAbsmat, C.int(4))
-	for i := 0; i < 4; i++ {
-		fltArr := C.GoBytes(unsafe.Pointer(relMatI[i]), 4)
-		relMat[i] = fltArr
-	}
 }
 
 func H3dSetNodeTransMat(node H3DNode, mat4x4 []float32) {
