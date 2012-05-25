@@ -897,3 +897,35 @@ func H3dAddGroupNode(parent H3DNode, name string) H3DNode {
 	defer C.free(unsafe.Pointer(cName))
 	return H3DNode(C.h3dAddGroupNode(C.H3DNode(parent), cName))
 }
+
+func H3dAddModelNode(parent H3DNode, name string, geometryRes H3DRes) H3DNode {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	return H3DNode(C.h3dAddModelNode(C.H3DNode(parent), cName, C.H3DRes(geometryRes)))
+}
+
+func H3dSetupModelAnimStage(modelNode H3DNode, stage int, animationRes H3DRes, layer int,
+	startNode string, additive bool) {
+	cStartNode := C.CString(startNode)
+	defer C.free(unsafe.Pointer(cStartNode))
+	C.h3dSetupModelAnimStage(C.H3DNode(modelNode), C.int(stage), C.H3DRes(animationRes),
+		C.int(layer), cStartNode, Int[additive])
+}
+
+func H3dSetModelAnimParams(modelNode H3DNode, stage int, time float32, weight float32) {
+	C.h3dSetModelAnimParams(C.H3DNode(modelNode), C.int(stage), C.float(time), C.float(weight))
+}
+
+func H3dSetModelMorpher(modelNode H3DNode, target string, weight float32) bool {
+	cTarget := C.CString(target)
+	defer C.free(unsafe.Pointer(cTarget))
+	return Bool[int(C.h3dSetModelMorpher(C.H3DNode(modelNode), cTarget, C.float(weight)))]
+}
+
+func H3dAddMeshNode(parent H3DNode, name string, materialRes H3DRes, batchStart int, batchCount int,
+	vertRStart int, vertEnd int) H3DNode {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	return H3DNode(C.h3dAddMeshNode(C.H3DNode(parent), cName, C.H3DRes(materialRes), C.int(batchStart),
+		C.int(batchCount), C.int(vertRStart), C.int(vertEnd)))
+}
