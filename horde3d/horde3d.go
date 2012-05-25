@@ -808,17 +808,18 @@ func H3dSetNodeTransform(node H3DNode, tx float32, ty float32, tz float32,
 		C.float(rx), C.float(ry), C.float(rz), C.float(sx), C.float(sy), C.float(sz))
 }
 
-func H3dGetNodeTransMats(node H3DNode, relMat []float32, absMat []float32) {
-	//TODO: Handle nil pointers, possibly check for nil
-	//TODO: Fix this by handling the arrays properly
-	var cRelMat unsafe.Pointer
-	var cAbsmat unsafe.Pointer
+//TODO: Implement float array properly
+//func H3dGetNodeTransMats(node H3DNode, relMat []float32, absMat []float32) {
+//TODO: Handle nil pointers, possibly check for nil
+//TODO: Fix this by handling the arrays properly
+//	var cRelMat unsafe.Pointer
+//	var cAbsmat unsafe.Pointer
 
-	defer C.free(cRelMat)
-	defer C.free(cAbsmat)
-	C.h3dGetNodeTransMats(C.H3DNode(node), (**C.float)(cRelMat),
-		(**C.float)(cAbsmat))
-}
+//	defer C.free(cRelMat)
+//	defer C.free(cAbsmat)
+//	C.h3dGetNodeTransMats(C.H3DNode(node), (**C.float)(cRelMat),
+//		(**C.float)(cAbsmat))
+//}
 
 func H3dSetNodeTransMat(node H3DNode, mat4x4 []float32) {
 	C.h3dSetNodeTransMat(C.H3DNode(node), (*C.float)(unsafe.Pointer(&mat4x4[0])))
@@ -884,6 +885,7 @@ func H3dCastRay(node H3DNode, ox float32, oy float32, oz float32,
 		C.float(dx), C.float(dy), C.float(dz), C.int(numNearest)))
 }
 
+//TODO: Implement float array properly
 //func H3dGetCastRayResult(index int, node *H3DNode, distance *float32, intersection []float32) bool {
 //
 //}
@@ -928,4 +930,34 @@ func H3dAddMeshNode(parent H3DNode, name string, materialRes H3DRes, batchStart 
 	defer C.free(unsafe.Pointer(cName))
 	return H3DNode(C.h3dAddMeshNode(C.H3DNode(parent), cName, C.H3DRes(materialRes), C.int(batchStart),
 		C.int(batchCount), C.int(vertRStart), C.int(vertEnd)))
+}
+
+func H3dAddJointNode(parent H3DNode, name string, jointIndex int) H3DNode {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	return H3DNode(C.h3dAddJointNode(C.H3DNode(parent), cName, C.int(jointIndex)))
+}
+
+func H3dAddLightNode(parent H3DNode, name string, materialRes H3DRes, lightingContext string,
+	shadowContext string) H3DNode {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	cLightingContext := C.CString(lightingContext)
+	defer C.free(unsafe.Pointer(cLightingContext))
+	cShadowContext := C.CString(shadowContext)
+	defer C.free(unsafe.Pointer(cShadowContext))
+
+	return H3DNode(C.h3dAddLightNode(C.H3DNode(parent), cName, C.H3DRes(materialRes), cLightingContext,
+		cShadowContext))
+}
+
+func H3dAddCameraNode(parent H3DNode, name string, pipelineRes H3DRes) H3DNode {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+
+	return H3DNode(C.h3dAddCameraNode(C.H3DNode(parent), cName, C.H3DRes(pipelineRes)))
+}
+
+func H3dSetupCameraView(cameraNode H3DNode, fov float32, aspect float32, nearDist float32, farDist float32) {
+	C.h3dSetupCameraView(C.H3DNode(cameraNode), C.float(fov), C.float(aspect), C.float(nearDist), C.float(farDist))
 }
