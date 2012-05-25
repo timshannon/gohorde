@@ -887,3 +887,13 @@ func H3dCastRay(node H3DNode, ox float32, oy float32, oz float32,
 //func H3dGetCastRayResult(index int, node *H3DNode, distance *float32, intersection []float32) bool {
 //
 //}
+
+func H3dCheckNodeVisibility(node H3DNode, cameraNode H3DNode, checkOcclusion bool, calcLod bool) int {
+	return int(C.h3dCheckNodeVisibility(C.H3DNode(node), C.H3DNode(cameraNode), Int[checkOcclusion], Int[calcLod]))
+}
+
+func H3dAddGroupNode(parent H3DNode, name string) H3DNode {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	return H3DNode(C.h3dAddGroupNode(C.H3DNode(parent), cName))
+}
