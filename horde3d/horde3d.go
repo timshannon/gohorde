@@ -958,6 +958,8 @@ func H3dAddCameraNode(parent H3DNode, name string, pipelineRes H3DRes) H3DNode {
 	return H3DNode(C.h3dAddCameraNode(C.H3DNode(parent), cName, C.H3DRes(pipelineRes)))
 }
 
-func H3dSetupCameraView(cameraNode H3DNode, fov float32, aspect float32, nearDist float32, farDist float32) {
-	C.h3dSetupCameraView(C.H3DNode(cameraNode), C.float(fov), C.float(aspect), C.float(nearDist), C.float(farDist))
+func H3dSetupCameraView(cameraNode H3DNode, fov float32, aspect float32,
+	nearDist float32, farDist float32) {
+	C.h3dSetupCameraView(C.H3DNode(cameraNode), C.float(fov), C.float(aspect),
+		C.float(nearDist), C.float(farDist))
 }
