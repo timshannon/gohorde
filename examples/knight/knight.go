@@ -22,7 +22,9 @@ package main
 
 import (
 	"code.google.com/p/gohorde/horde3d"
+	"fmt"
 	"github.com/jteeuwen/glfw"
+	"os"
 )
 
 const (
@@ -31,10 +33,49 @@ const (
 	appHeight = 600
 )
 
-var (
-	fullscreen bool = false
-	running    bool
-)
-
 func main() {
+	var running bool = true
+
+	if err := glfw.Init(); err != nil {
+		fmt.Fprintf(os.Stderr, "[e] %v\n", err)
+		return
+	}
+
+	//ensure glfw is cleaned up
+	defer glfw.Terminate()
+
+	if err := glfw.OpenWindow(appWidth, appHeight, 8, 8, 8, 8,
+		24, 8, glfw.Windowed); err != nil {
+		fmt.Fprintf(os.Stderr, "[e] %v\n", err)
+		return
+	}
+	defer glfw.CloseWindow()
+
+	horde3d.Init()
+	//pipeline
+	hdrPipeline := horde3d.AddResource(horde3d.H3DResTypes_Pipeline, "hdr.pipeline.xml", 0)
+
+	//add camera
+	cam := horde3d.AddCameraNode(horde3d.RootNode, "Camera", hdrPipeline)
+	//Setup Camera Viewport
+	horde3d.SetNodeParamI(cam, horde3d.H3DCamera_ViewportXI, 0)
+	horde3d.SetNodeParamI(cam, horde3d.H3DCamera_ViewportYI, 0)
+	horde3d.SetNodeParamI(cam, horde3d.H3DCamera_ViewportWidthI, appWidth)
+	horde3d.SetNodeParamI(cam, horde3d.H3DCamera_ViewportHeightI, appHeight)
+
+	//enable vertical sync if the card supports it
+	glfw.SetSwapInterval(1)
+
+	glfw.SetWindowTitle("Horde3d Knight demo implemented in Go")
+
+	//load resources paths separated by |
+	horde3d.LoadResourcesFromDisk("../content/pipelines")
+	for running {
+		horde3d.Render(cam)
+		glfw.SwapBuffers()
+		running = glfw.Key(glfw.KeyEsc) == 0 &&
+			glfw.WindowParam(glfw.Opened) == 1
+	}
+
+	horde3d.Release()
 }

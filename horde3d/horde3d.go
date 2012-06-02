@@ -649,15 +649,23 @@ func GetNextResource(resType int, start H3DRes) H3DRes {
 }
 
 func FindResource(resType int, name string) H3DRes {
-	return H3DRes(C.h3dFindResource(C.int(resType), (*C.char)(unsafe.Pointer(&name))))
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+
+	return H3DRes(C.h3dFindResource(C.int(resType), cName))
 }
 
 func AddResource(resType int, name string, flags int) H3DRes {
-	return H3DRes(C.h3dAddResource(C.int(resType), (*C.char)(unsafe.Pointer(&name)), C.int(flags)))
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	return H3DRes(C.h3dAddResource(C.int(resType), cName, C.int(flags)))
 }
 
 func CloneResource(sourceRes H3DRes, name string) H3DRes {
-	return H3DRes(C.h3dCloneResource(C.H3DRes(sourceRes), (*C.char)(unsafe.Pointer(&name))))
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+
+	return H3DRes(C.h3dCloneResource(C.H3DRes(sourceRes), cName))
 }
 
 func RemoveResource(res H3DRes) int {
