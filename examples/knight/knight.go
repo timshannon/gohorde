@@ -69,7 +69,8 @@ func main() {
 	glfw.SetWindowTitle("Horde3d Knight demo implemented in Go")
 
 	//load resources paths separated by |
-	horde3d.LoadResourcesFromDisk("../content/pipelines")
+	horde3d.LoadResourcesFromDisk("../content|" +
+		"../content/pipelines")
 	for running {
 		horde3d.Render(cam)
 		glfw.SwapBuffers()
@@ -77,5 +78,6 @@ func main() {
 			glfw.WindowParam(glfw.Opened) == 1
 	}
 
+	horde3d.DumpMessages()
 	horde3d.Release()
 }
