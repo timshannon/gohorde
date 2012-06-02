@@ -14,7 +14,7 @@ type H3DRes C.int
 type H3DNode C.int
 
 //const H3DNode H3DRootNode = 1;
-const H3DRootNode H3DNode = 1
+const RootNode H3DNode = 1
 
 /* Group: Enumerations */
 
