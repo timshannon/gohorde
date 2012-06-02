@@ -753,8 +753,6 @@ func H3dGetRenderTargetData(pipelineRes H3DRes, targetName string, bufIndex int,
 	height *int, compCount *int, dataBuffer []byte, bufferSize int) bool {
 	cTargetName := C.CString(targetName)
 	defer C.free(unsafe.Pointer(cTargetName))
-	//TODO: Not sure if this is correct, or how Go's GC will handle it
-	//slcHead := (*reflect.SliceHeader)((unsafe.Pointer(&dataBuffer)))
 
 	var cDataBuffer unsafe.Pointer
 	defer C.free(cDataBuffer)
