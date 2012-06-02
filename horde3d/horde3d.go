@@ -539,7 +539,7 @@ var Int = map[bool]C.int{
 
 func GetVersionString() string {
 	verPointer := C.h3dGetVersionString()
-	defer C.free(unsafe.Pointer(verPointer))
+	//defer C.free(unsafe.Pointer(verPointer))
 
 	return C.GoString(verPointer)
 }
