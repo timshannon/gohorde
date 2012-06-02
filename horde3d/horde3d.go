@@ -537,63 +537,63 @@ var Int = map[bool]C.int{
 	true:  C.int(0),
 }
 
-func H3dGetVersionString() string {
+func GetVersionString() string {
 	verPointer := C.h3dGetVersionString()
 	defer C.free(unsafe.Pointer(verPointer))
 
 	return C.GoString(verPointer)
 }
 
-func H3dCheckExtension(extensionName string) bool {
+func CheckExtension(extensionName string) bool {
 	cExtName := C.CString(extensionName)
 	defer C.free(unsafe.Pointer(cExtName))
 	return Bool[int(C.h3dCheckExtension(cExtName))]
 }
 
-func H3dGetError() bool {
+func GetError() bool {
 	return Bool[int(C.h3dGetError())]
 }
 
-func H3dInit() bool {
+func Init() bool {
 	return Bool[int(C.h3dInit())]
 }
 
-func H3dRelease() {
+func Release() {
 	C.h3dRelease()
 }
 
-func H3dRender(cameraNode H3DNode) {
+func Render(cameraNode H3DNode) {
 	C.h3dRender(C.H3DNode(cameraNode))
 }
 
-func H3dFinalizeFrame() {
+func FinalizeFrame() {
 	C.h3dFinalizeFrame()
 }
 
-func H3dClear() {
+func Clear() {
 	C.h3dClear()
 }
 
-func H3dGetMessage(level *int, time *float32) string {
+func GetMessage(level *int, time *float32) string {
 	message := C.h3dGetMessage((*C.int)(unsafe.Pointer(level)),
 		(*C.float)(unsafe.Pointer(time)))
 	defer C.free(unsafe.Pointer(message))
 	return C.GoString(message)
 }
 
-func H3dGetOption(param int) float32 {
+func GetOption(param int) float32 {
 	return float32(C.h3dGetOption(C.int(param)))
 }
 
-func H3dSetOption(param int, value float32) bool {
+func SetOption(param int, value float32) bool {
 	return Bool[int(C.h3dSetOption(C.int(param), C.float(value)))]
 }
 
-func H3dGetStat(param int, reset bool) float32 {
+func GetStat(param int, reset bool) float32 {
 	return float32(C.h3dGetStat(C.int(param), Int[reset]))
 }
 
-func H3dShowOverlays(verts []float32,
+func ShowOverlays(verts []float32,
 	vertCount int,
 	colR float32,
 	colG float32,
@@ -612,93 +612,93 @@ func H3dShowOverlays(verts []float32,
 		C.int(flags))
 }
 
-func H3dClearOverlays() {
+func ClearOverlays() {
 	C.h3dClearOverlays()
 }
 
-func H3dGetResType(res H3DRes) int {
+func GetResType(res H3DRes) int {
 	return int(C.h3dGetResType(C.H3DRes(res)))
 }
 
-func H3dGetResName(res H3DRes) string {
+func GetResName(res H3DRes) string {
 	return C.GoString(C.h3dGetResName(C.H3DRes(res)))
 }
 
-func H3dGetNextResource(resType int, start H3DRes) H3DRes {
+func GetNextResource(resType int, start H3DRes) H3DRes {
 	return H3DRes(C.h3dGetNextResource(C.int(resType), C.H3DRes(start)))
 }
 
-func H3dFindResource(resType int, name string) H3DRes {
+func FindResource(resType int, name string) H3DRes {
 	return H3DRes(C.h3dFindResource(C.int(resType), (*C.char)(unsafe.Pointer(&name))))
 }
 
-func H3dAddResource(resType int, name string, flags int) H3DRes {
+func AddResource(resType int, name string, flags int) H3DRes {
 	return H3DRes(C.h3dAddResource(C.int(resType), (*C.char)(unsafe.Pointer(&name)), C.int(flags)))
 }
 
-func H3dCloneResource(sourceRes H3DRes, name string) H3DRes {
+func CloneResource(sourceRes H3DRes, name string) H3DRes {
 	return H3DRes(C.h3dCloneResource(C.H3DRes(sourceRes), (*C.char)(unsafe.Pointer(&name))))
 }
 
-func H3dRemoveResource(res H3DRes) int {
+func RemoveResource(res H3DRes) int {
 	return int(C.h3dRemoveResource(C.H3DRes(res)))
 }
 
-func H3dIsResLoaded(res H3DRes) bool {
+func IsResLoaded(res H3DRes) bool {
 	return Bool[int(C.h3dIsResLoaded(C.H3DRes(res)))]
 }
 
-func H3dLoadResource(res H3DRes, data *string, size int) bool {
+func LoadResource(res H3DRes, data *string, size int) bool {
 	//TODO: Can I use a data []byte instead?
 	return Bool[int(C.h3dLoadResource(C.H3DRes(res), (*C.char)(unsafe.Pointer(data)), C.int(size)))]
 }
 
-func H3dUnloadResource(res H3DRes) {
+func UnloadResource(res H3DRes) {
 	C.h3dUnloadResource(C.H3DRes(res))
 }
 
-func H3dGetResElemCount(res H3DRes, elem int) int {
+func GetResElemCount(res H3DRes, elem int) int {
 	return int(C.h3dGetResElemCount(C.H3DRes(res), C.int(elem)))
 }
 
-func H3dFindResElem(res H3DRes, elem int, param int, value string) int {
+func FindResElem(res H3DRes, elem int, param int, value string) int {
 	cValue := C.CString(value)
 	defer C.free(unsafe.Pointer(cValue))
 	return int(C.h3dFindResElem(C.H3DRes(res),
 		C.int(elem), C.int(param), cValue))
 }
 
-func H3dGetResParamI(res H3DRes, elem int, elemIdx int, param int) int {
+func GetResParamI(res H3DRes, elem int, elemIdx int, param int) int {
 	return int(C.h3dGetResParamI(C.H3DRes(res), C.int(elem), C.int(elemIdx), C.int(param)))
 }
 
-func H3dSetResParamI(res H3DRes, elem int, elemIdx int, param int, value int) {
+func SetResParamI(res H3DRes, elem int, elemIdx int, param int, value int) {
 	C.h3dSetResParamI(C.H3DRes(res), C.int(elem), C.int(elemIdx), C.int(param), C.int(value))
 }
 
-func H3dGetResParamF(res H3DRes, elem int, elemIdx int, param int, compIdx int) float32 {
+func GetResParamF(res H3DRes, elem int, elemIdx int, param int, compIdx int) float32 {
 	return float32(C.h3dGetResParamF(C.H3DRes(res),
 		C.int(elem), C.int(elemIdx), C.int(param), C.int(compIdx)))
 }
 
-func H3dSetResParamF(res H3DRes, elem int, elemIdx int, param int, compIdx int, value float32) {
+func SetResParamF(res H3DRes, elem int, elemIdx int, param int, compIdx int, value float32) {
 	C.h3dSetResParamF(C.H3DRes(res),
 		C.int(elem), C.int(elemIdx), C.int(param), C.int(compIdx), C.float(value))
 }
 
-func H3dGetResParamStr(res H3DRes, elem int, elemIdx int, param int) string {
+func GetResParamStr(res H3DRes, elem int, elemIdx int, param int) string {
 	value := C.h3dGetResParamStr(C.H3DRes(res), C.int(elem), C.int(elemIdx), C.int(param))
 	defer C.free(unsafe.Pointer(value))
 	return C.GoString(value)
 }
 
-func H3dSetResParamStr(res H3DRes, elem int, elemIdx int, param int, value string) {
+func SetResParamStr(res H3DRes, elem int, elemIdx int, param int, value string) {
 	cValue := C.CString(value)
 	defer C.free(unsafe.Pointer(cValue))
 	C.h3dSetResParamStr(C.H3DRes(res), C.int(elem), C.int(elemIdx), C.int(param), cValue)
 }
 
-func H3dMapResStream(res H3DRes, elem int, elemIdx int, stream int, read bool, write bool, size int) []byte {
+func MapResStream(res H3DRes, elem int, elemIdx int, stream int, read bool, write bool, size int) []byte {
 	//TODO: Review this method of getting the stream data from the pointer 
 
 	cStream := C.h3dMapResStream(C.H3DRes(res), C.int(elem), C.int(elemIdx), C.int(stream),
@@ -709,25 +709,25 @@ func H3dMapResStream(res H3DRes, elem int, elemIdx int, stream int, read bool, w
 	return C.GoBytes(unsafe.Pointer(cStream), C.int(size))
 }
 
-func H3dUnmapResStream(res H3DRes) {
+func UnmapResStream(res H3DRes) {
 	C.h3dUnmapResStream(C.H3DRes(res))
 }
 
-func H3dQueryUnloadedResource(index int) H3DRes {
+func QueryUnloadedResource(index int) H3DRes {
 	return H3DRes(C.h3dQueryUnloadedResource(C.int(index)))
 }
 
-func H3dReleaseUnusedResources() {
+func ReleaseUnusedResources() {
 	C.h3dReleaseUnusedResources()
 }
 
-func H3dCreateTexture(name string, width int, height int, fmt int, flags int) H3DRes {
+func CreateTexture(name string, width int, height int, fmt int, flags int) H3DRes {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	return H3DRes(C.h3dCreateTexture(cName, C.int(width), C.int(height), C.int(fmt), C.int(flags)))
 }
 
-func H3dSetShaderPreambles(vertPreamble string, fragPreamble string) {
+func SetShaderPreambles(vertPreamble string, fragPreamble string) {
 	cVertPreamble := C.CString(vertPreamble)
 	cFragPreamble := C.CString(fragPreamble)
 	defer C.free(unsafe.Pointer(cVertPreamble))
@@ -736,7 +736,7 @@ func H3dSetShaderPreambles(vertPreamble string, fragPreamble string) {
 	C.h3dSetShaderPreambles(cVertPreamble, cFragPreamble)
 }
 
-func H3dSetMaterialUniform(materialRes H3DRes, name string, a float32, b float32,
+func SetMaterialUniform(materialRes H3DRes, name string, a float32, b float32,
 	c float32, d float32) bool {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
@@ -745,11 +745,11 @@ func H3dSetMaterialUniform(materialRes H3DRes, name string, a float32, b float32
 		C.float(a), C.float(b), C.float(c), C.float(d)))]
 }
 
-func H3dResizePipelineBuffers(pipeRes H3DRes, width int, height int) {
+func ResizePipelineBuffers(pipeRes H3DRes, width int, height int) {
 	C.h3dResizePipelineBuffers(C.H3DRes(pipeRes), C.int(width), C.int(height))
 }
 
-func H3dGetRenderTargetData(pipelineRes H3DRes, targetName string, bufIndex int, width *int,
+func GetRenderTargetData(pipelineRes H3DRes, targetName string, bufIndex int, width *int,
 	height *int, compCount *int, dataBuffer []byte, bufferSize int) bool {
 	cTargetName := C.CString(targetName)
 	defer C.free(unsafe.Pointer(cTargetName))
@@ -764,35 +764,35 @@ func H3dGetRenderTargetData(pipelineRes H3DRes, targetName string, bufIndex int,
 	return targetFound
 }
 
-func H3dGetNodeType(node H3DNode) int {
+func GetNodeType(node H3DNode) int {
 	return int(C.h3dGetNodeType(C.H3DNode(node)))
 }
 
-func H3dGetNodeParent(node H3DNode) H3DNode {
+func GetNodeParent(node H3DNode) H3DNode {
 	return H3DNode(C.h3dGetNodeParent(C.H3DNode(node)))
 }
 
-func H3dSetNodeParent(node H3DNode, parent H3DNode) bool {
+func SetNodeParent(node H3DNode, parent H3DNode) bool {
 	return Bool[int(C.h3dSetNodeParent(C.H3DNode(node), C.H3DNode(parent)))]
 }
 
-func H3dGetNodeChild(node H3DNode, index int) bool {
+func GetNodeChild(node H3DNode, index int) bool {
 	return Bool[int(C.h3dGetNodeChild(C.H3DNode(node), C.int(index)))]
 }
 
-func H3dAddNodes(parent H3DNode, sceneGraphRes H3DRes) H3DNode {
+func AddNodes(parent H3DNode, sceneGraphRes H3DRes) H3DNode {
 	return H3DNode(C.h3dAddNodes(C.H3DNode(parent), C.H3DRes(sceneGraphRes)))
 }
 
-func H3dRemoveNode(node H3DNode) {
+func RemoveNode(node H3DNode) {
 	C.h3dRemoveNode(C.H3DNode(node))
 }
 
-func H3dCheckNodeTransFlag(node H3DNode, reset bool) bool {
+func CheckNodeTransFlag(node H3DNode, reset bool) bool {
 	return Bool[int(C.h3dCheckNodeTransFlag(C.H3DNode(node), Int[reset]))]
 }
 
-func H3dGetNodeTransform(node H3DNode, tx *float32, ty *float32, tz *float32,
+func GetNodeTransform(node H3DNode, tx *float32, ty *float32, tz *float32,
 	rx *float32, ry *float32, rz *float32, sx *float32, sy *float32, sz *float32) {
 	C.h3dGetNodeTransform(C.H3DNode(node), (*C.float)(unsafe.Pointer(tx)), (*C.float)(unsafe.Pointer(ty)),
 		(*C.float)(unsafe.Pointer(tz)), (*C.float)(unsafe.Pointer(rx)), (*C.float)(unsafe.Pointer(ry)),
@@ -800,14 +800,14 @@ func H3dGetNodeTransform(node H3DNode, tx *float32, ty *float32, tz *float32,
 		(*C.float)(unsafe.Pointer(sz)))
 }
 
-func H3dSetNodeTransform(node H3DNode, tx float32, ty float32, tz float32,
+func SetNodeTransform(node H3DNode, tx float32, ty float32, tz float32,
 	rx float32, ry float32, rz float32, sx float32, sy float32, sz float32) {
 	C.h3dSetNodeTransform(C.H3DNode(node), C.float(tx), C.float(ty), C.float(tz),
 		C.float(rx), C.float(ry), C.float(rz), C.float(sx), C.float(sy), C.float(sz))
 }
 
 //TODO: Implement float array properly
-//func H3dGetNodeTransMats(node H3DNode, relMat []float32, absMat []float32) {
+//func GetNodeTransMats(node H3DNode, relMat []float32, absMat []float32) {
 //TODO: Handle nil pointers, possibly check for nil
 //TODO: Fix this by handling the arrays properly
 //	var cRelMat unsafe.Pointer
@@ -819,47 +819,47 @@ func H3dSetNodeTransform(node H3DNode, tx float32, ty float32, tz float32,
 //		(**C.float)(cAbsmat))
 //}
 
-func H3dSetNodeTransMat(node H3DNode, mat4x4 []float32) {
+func SetNodeTransMat(node H3DNode, mat4x4 []float32) {
 	C.h3dSetNodeTransMat(C.H3DNode(node), (*C.float)(unsafe.Pointer(&mat4x4[0])))
 }
 
-func H3dGetNodeParamI(node H3DNode, param int) int {
+func GetNodeParamI(node H3DNode, param int) int {
 	return int(C.h3dGetNodeParamI(C.H3DNode(node), C.int(param)))
 }
 
-func H3dSetNodeParamI(node H3DNode, param int, value int) {
+func SetNodeParamI(node H3DNode, param int, value int) {
 	C.h3dSetNodeParamI(C.H3DNode(node), C.int(param), C.int(value))
 }
 
-func H3dGetNodeParamF(node H3DNode, param int, compIdx int) float32 {
+func GetNodeParamF(node H3DNode, param int, compIdx int) float32 {
 	return float32(C.h3dGetNodeParamF(C.H3DNode(node), C.int(param), C.int(compIdx)))
 }
 
-func H3dSetNodeParamF(node H3DNode, param int, compIdx int, value float32) {
+func SetNodeParamF(node H3DNode, param int, compIdx int, value float32) {
 	C.h3dSetNodeParamF(C.H3DNode(node), C.int(param), C.int(compIdx), C.float(value))
 }
 
-func H3dGetNodeParamStr(node H3DNode, param int) string {
+func GetNodeParamStr(node H3DNode, param int) string {
 	value := C.h3dGetNodeParamStr(C.H3DNode(node), C.int(param))
 	defer C.free(unsafe.Pointer(value))
 	return C.GoString(value)
 }
 
-func H3dSetNodeParamStr(node H3DNode, param int, value string) {
+func SetNodeParamStr(node H3DNode, param int, value string) {
 	cValue := C.CString(value)
 	C.free(unsafe.Pointer(cValue))
 	C.h3dSetNodeParamStr(C.H3DNode(node), C.int(param), cValue)
 }
 
-func H3dGetNodeFlags(node H3DNode) int {
+func GetNodeFlags(node H3DNode) int {
 	return int(C.h3dGetNodeFlags(C.H3DNode(node)))
 }
 
-func H3dSetNodeFlags(node H3DNode, flags int, recursive bool) {
+func SetNodeFlags(node H3DNode, flags int, recursive bool) {
 	C.h3dSetNodeFlags(C.H3DNode(node), C.int(flags), Int[recursive])
 }
 
-func H3dGetNodeAABB(node H3DNode, minX *float32, minY *float32, minZ *float32,
+func GetNodeAABB(node H3DNode, minX *float32, minY *float32, minZ *float32,
 	maxX *float32, maxY *float32, maxZ *float32) {
 	C.h3dGetNodeAABB(C.H3DNode(node), (*C.float)(unsafe.Pointer(minX)),
 		(*C.float)(unsafe.Pointer(minY)), (*C.float)(unsafe.Pointer(minZ)),
@@ -867,44 +867,44 @@ func H3dGetNodeAABB(node H3DNode, minX *float32, minY *float32, minZ *float32,
 		(*C.float)(unsafe.Pointer(maxZ)))
 }
 
-func H3dFindNodes(node H3DNode, name string, nodeType int) int {
+func FindNodes(node H3DNode, name string, nodeType int) int {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	return int(C.h3dFindNodes(C.H3DNode(node), cName, C.int(nodeType)))
 }
 
-func H3dGetNodeFindResult(index int) H3DNode {
+func GetNodeFindResult(index int) H3DNode {
 	return H3DNode(C.h3dGetNodeFindResult(C.int(index)))
 }
 
-func H3dCastRay(node H3DNode, ox float32, oy float32, oz float32,
+func CastRay(node H3DNode, ox float32, oy float32, oz float32,
 	dx float32, dy float32, dz float32, numNearest int) int {
 	return int(C.h3dCastRay(C.H3DNode(node), C.float(ox), C.float(oy), C.float(oz),
 		C.float(dx), C.float(dy), C.float(dz), C.int(numNearest)))
 }
 
 //TODO: Implement float array properly
-//func H3dGetCastRayResult(index int, node *H3DNode, distance *float32, intersection []float32) bool {
+//func GetCastRayResult(index int, node *H3DNode, distance *float32, intersection []float32) bool {
 //
 //}
 
-func H3dCheckNodeVisibility(node H3DNode, cameraNode H3DNode, checkOcclusion bool, calcLod bool) int {
+func CheckNodeVisibility(node H3DNode, cameraNode H3DNode, checkOcclusion bool, calcLod bool) int {
 	return int(C.h3dCheckNodeVisibility(C.H3DNode(node), C.H3DNode(cameraNode), Int[checkOcclusion], Int[calcLod]))
 }
 
-func H3dAddGroupNode(parent H3DNode, name string) H3DNode {
+func AddGroupNode(parent H3DNode, name string) H3DNode {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	return H3DNode(C.h3dAddGroupNode(C.H3DNode(parent), cName))
 }
 
-func H3dAddModelNode(parent H3DNode, name string, geometryRes H3DRes) H3DNode {
+func AddModelNode(parent H3DNode, name string, geometryRes H3DRes) H3DNode {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	return H3DNode(C.h3dAddModelNode(C.H3DNode(parent), cName, C.H3DRes(geometryRes)))
 }
 
-func H3dSetupModelAnimStage(modelNode H3DNode, stage int, animationRes H3DRes, layer int,
+func SetupModelAnimStage(modelNode H3DNode, stage int, animationRes H3DRes, layer int,
 	startNode string, additive bool) {
 	cStartNode := C.CString(startNode)
 	defer C.free(unsafe.Pointer(cStartNode))
@@ -912,17 +912,17 @@ func H3dSetupModelAnimStage(modelNode H3DNode, stage int, animationRes H3DRes, l
 		C.int(layer), cStartNode, Int[additive])
 }
 
-func H3dSetModelAnimParams(modelNode H3DNode, stage int, time float32, weight float32) {
+func SetModelAnimParams(modelNode H3DNode, stage int, time float32, weight float32) {
 	C.h3dSetModelAnimParams(C.H3DNode(modelNode), C.int(stage), C.float(time), C.float(weight))
 }
 
-func H3dSetModelMorpher(modelNode H3DNode, target string, weight float32) bool {
+func SetModelMorpher(modelNode H3DNode, target string, weight float32) bool {
 	cTarget := C.CString(target)
 	defer C.free(unsafe.Pointer(cTarget))
 	return Bool[int(C.h3dSetModelMorpher(C.H3DNode(modelNode), cTarget, C.float(weight)))]
 }
 
-func H3dAddMeshNode(parent H3DNode, name string, materialRes H3DRes, batchStart int, batchCount int,
+func AddMeshNode(parent H3DNode, name string, materialRes H3DRes, batchStart int, batchCount int,
 	vertRStart int, vertEnd int) H3DNode {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
@@ -930,13 +930,13 @@ func H3dAddMeshNode(parent H3DNode, name string, materialRes H3DRes, batchStart 
 		C.int(batchCount), C.int(vertRStart), C.int(vertEnd)))
 }
 
-func H3dAddJointNode(parent H3DNode, name string, jointIndex int) H3DNode {
+func AddJointNode(parent H3DNode, name string, jointIndex int) H3DNode {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	return H3DNode(C.h3dAddJointNode(C.H3DNode(parent), cName, C.int(jointIndex)))
 }
 
-func H3dAddLightNode(parent H3DNode, name string, materialRes H3DRes, lightingContext string,
+func AddLightNode(parent H3DNode, name string, materialRes H3DRes, lightingContext string,
 	shadowContext string) H3DNode {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
@@ -949,26 +949,26 @@ func H3dAddLightNode(parent H3DNode, name string, materialRes H3DRes, lightingCo
 		cShadowContext))
 }
 
-func H3dAddCameraNode(parent H3DNode, name string, pipelineRes H3DRes) H3DNode {
+func AddCameraNode(parent H3DNode, name string, pipelineRes H3DRes) H3DNode {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 
 	return H3DNode(C.h3dAddCameraNode(C.H3DNode(parent), cName, C.H3DRes(pipelineRes)))
 }
 
-func H3dSetupCameraView(cameraNode H3DNode, fov float32, aspect float32,
+func SetupCameraView(cameraNode H3DNode, fov float32, aspect float32,
 	nearDist float32, farDist float32) {
 	C.h3dSetupCameraView(C.H3DNode(cameraNode), C.float(fov), C.float(aspect),
 		C.float(nearDist), C.float(farDist))
 }
 
 //TODO: Float arrays
-//func H3dGetCameraProjMat(cameraNode H3DNode, projMat []float32) {
+//func GetCameraProjMat(cameraNode H3DNode, projMat []float32) {
 
 //C.h3dGetCameraProjMat(C.H3DNode(cameraNode), 
 //}
 
-func H3dAddEmitterNode(parent H3DNode, name string, materialRes H3DRes, particleEffectRes H3DRes,
+func AddEmitterNode(parent H3DNode, name string, materialRes H3DRes, particleEffectRes H3DRes,
 	maxParticleCount int, respawnCount int) H3DNode {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
@@ -976,10 +976,10 @@ func H3dAddEmitterNode(parent H3DNode, name string, materialRes H3DRes, particle
 		C.H3DRes(particleEffectRes), C.int(maxParticleCount), C.int(respawnCount)))
 }
 
-func H3dAdvanceEmitterTime(emitterNode H3DNode, timeDelta float32) {
+func AdvanceEmitterTime(emitterNode H3DNode, timeDelta float32) {
 	C.h3dAdvanceEmitterTime(C.H3DNode(emitterNode), C.float(timeDelta))
 }
 
-func H3dHasEmitterFinished(emitterNode H3DNode) bool {
+func HasEmitterFinished(emitterNode H3DNode) bool {
 	return Bool[int(C.h3dHasEmitterFinished(C.H3DNode(emitterNode)))]
 }
