@@ -963,3 +963,25 @@ func H3dSetupCameraView(cameraNode H3DNode, fov float32, aspect float32,
 	C.h3dSetupCameraView(C.H3DNode(cameraNode), C.float(fov), C.float(aspect),
 		C.float(nearDist), C.float(farDist))
 }
+
+//TODO: Float arrays
+//func H3dGetCameraProjMat(cameraNode H3DNode, projMat []float32) {
+
+//C.h3dGetCameraProjMat(C.H3DNode(cameraNode), 
+//}
+
+func H3dAddEmitterNode(parent H3DNode, name string, materialRes H3DRes, particleEffectRes H3DRes,
+	maxParticleCount int, respawnCount int) H3DNode {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	return H3DNode(C.h3dAddEmitterNode(C.H3DNode(parent), cName, C.H3DRes(materialRes),
+		C.H3DRes(particleEffectRes), C.int(maxParticleCount), C.int(respawnCount)))
+}
+
+func H3dAdvanceEmitterTime(emitterNode H3DNode, timeDelta float32) {
+	C.h3dAdvanceEmitterTime(C.H3DNode(emitterNode), C.float(timeDelta))
+}
+
+func H3dHasEmitterFinished(emitterNode H3DNode) bool {
+	return Bool[int(C.h3dHasEmitterFinished(C.H3DNode(emitterNode)))]
+}
