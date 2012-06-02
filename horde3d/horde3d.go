@@ -10,8 +10,8 @@ import "unsafe"
 
 //typedef int H3DRes;
 //typedef int H3DNode;
-type H3DRes int
-type H3DNode int
+type H3DRes C.int
+type H3DNode C.int
 
 //const H3DNode H3DRootNode = 1;
 const H3DRootNode H3DNode = 1

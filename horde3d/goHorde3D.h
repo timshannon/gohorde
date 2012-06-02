@@ -57,7 +57,8 @@ typedef int H3DNode;
 /*	Constants: Predefined constants
 	H3DRootNode  - Scene root node handle
 */
-const H3DNode H3DRootNode = 1;
+//defined in Go
+//const H3DNode H3DRootNode = 1;
 
 
 
