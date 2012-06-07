@@ -40,7 +40,7 @@ func main() {
 		panic(sdl.GetError())
 	}
 
-	sdl.WM_SetCaption("Simple SDL Frame", "")
+	sdl.WM_SetCaption("Horde3d Go SDL Example", "")
 
 	//set sdl video mode
 	if sdl.SetVideoMode(width, height, 32, sdl.OPENGL) == nil {
@@ -51,11 +51,19 @@ func main() {
 	fmt.Println("Version: ", horde3d.GetVersionString())
 
 	//pipeline
-	pipeRes := horde3d.AddResource(horde3d.H3DResTypes_Pipeline, "standard.pipeline.xml", 0)
-	modelRes := horde3d.AddResource(horde3d.H3DResTypes_SceneGraph, "character.scene.xml", 0)
-	animRes := horde3d.AddResource(horde3d.H3DResTypes_Animation, "walk.anim.xml", 0)
+	pipeRes := horde3d.AddResource(horde3d.H3DResTypes_Pipeline, "forward.pipeline.xml", 0)
+	modelRes := horde3d.AddResource(horde3d.H3DResTypes_SceneGraph, "platform.scene.xml", 0)
 
-	horde3d.LoadResourcesFromDisk("")
+	horde3d.LoadResourcesFromDisk("../content|" +
+		"../content/pipelines|" +
+		"../content/models|" +
+		"../content/materials|" +
+		"../content/shaders|" +
+		"../content/textures|" +
+		"../content/animations|" +
+		"../content/particles|" +
+		"../content/models/platform|" +
+		"../content/effects")
 
 	//add camera
 	cam := horde3d.AddCameraNode(horde3d.RootNode, "Camera", pipeRes)
@@ -67,15 +75,14 @@ func main() {
 
 	//add model
 	model := horde3d.AddNodes(horde3d.RootNode, modelRes)
-	horde3d.SetupModelAnimStage(model, 0, animRes, 0, "", false)
 	//add light
 	light := horde3d.AddLightNode(horde3d.RootNode, "Light1", 0, "LIGHTING", "SHADOWMAP")
 	horde3d.SetNodeTransform(light, 0, 20, 0, 0, 0, 0, 1, 1, 1)
 	horde3d.SetNodeParamF(light, horde3d.H3DLight_RadiusF, 0, 50)
 	horde3d.SetNodeParamF(light, horde3d.H3DLight_FovF, 0, 90)
-	horde3d.SetNodeParamI(light, horde3d.H3DLight_ShadowMapCountI, 3)
+	//horde3d.SetNodeParamI(light, horde3d.H3DLight_ShadowMapCountI, 3)
 	horde3d.SetNodeParamF(light, horde3d.H3DLight_ShadowSplitLambdaF, 0, 0.9)
-	horde3d.SetNodeParamF(light, horde3d.H3DLight_ShadowMapBiasF, 0, 0.001)
+	//horde3d.SetNodeParamF(light, horde3d.H3DLight_ShadowMapBiasF, 0, 0.001)
 	horde3d.SetNodeParamF(light, horde3d.H3DLight_ColorF3, 0, 0.9)
 	horde3d.SetNodeParamF(light, horde3d.H3DLight_ColorF3, 1, 0.7)
 	horde3d.SetNodeParamF(light, horde3d.H3DLight_ColorF3, 2, 0.75)
@@ -90,12 +97,12 @@ func main() {
 			running = false
 			break
 		}
-		horde3d.SetModelAnimParams(model, 0, t, 1.0)
 		horde3d.SetNodeTransform(model,
 			t*10, 0, 0,
 			0, 0, 0,
 			1, 1, 1)
 		horde3d.Render(cam)
+		horde3d.DumpMessages()
 		sdl.GL_SwapBuffers()
 	}
 	horde3d.Release()
