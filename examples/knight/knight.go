@@ -76,6 +76,20 @@ func main() {
 	// Particle system
 	particleSysRes := horde3d.AddResource(horde3d.H3DResTypes_SceneGraph, "particleSys1.scene.xml", 0)
 
+	//load resources paths separated by |
+	horde3d.LoadResourcesFromDisk("../content|" +
+		"../content/pipelines|" +
+		"../content/models|" +
+		"../content/materials|" +
+		"../content/shaders|" +
+		"../content/textures|" +
+		"../content/animations|" +
+		"../content/particles|" +
+		"../content/models/sphere|" +
+		"../content/models/knight|" +
+		"../content/particles/particleSys1|" +
+		"../content/effects")
+
 	//Add Scene Nodes
 	//add camera
 	cam := horde3d.AddCameraNode(horde3d.RootNode, "Camera", hdrPipeline)
@@ -103,38 +117,30 @@ func main() {
 	horde3d.SetNodeTransform(light, 0, 15, 10, -60, 0, 0, 1, 1, 1)
 	horde3d.SetNodeParamF(light, horde3d.H3DLight_RadiusF, 0, 30)
 	horde3d.SetNodeParamF(light, horde3d.H3DLight_FovF, 0, 90)
-	horde3d.SetNodeParamI(light, horde3d.H3DLight_ShadowMapCountI, 1)
-	horde3d.SetNodeParamF(light, horde3d.H3DLight_ShadowMapBiasF, 0, 0.01)
-	horde3d.SetNodeParamF(light, horde3d.H3DLight_ColorF3, 0, 1.0)
-	horde3d.SetNodeParamF(light, horde3d.H3DLight_ColorF3, 1, 0.8)
-	horde3d.SetNodeParamF(light, horde3d.H3DLight_ColorF3, 2, 0.7)
+	//horde3d.SetNodeParamI(light, horde3d.H3DLight_ShadowMapCountI, 1)
+	//horde3d.SetNodeParamF(light, horde3d.H3DLight_ShadowMapBiasF, 0, 0.01)
+	horde3d.SetNodeParamF(light, horde3d.H3DLight_ColorF3, 1, 1.0)
+	horde3d.SetNodeParamF(light, horde3d.H3DLight_ColorF3, 2, 0.8)
+	horde3d.SetNodeParamF(light, horde3d.H3DLight_ColorF3, 3, 0.7)
 
 	// Customize post processing effects
-	matRes := horde3d.FindResource(horde3d.H3DResTypes_Material, "postHDR.material.xml")
+	//matRes := horde3d.FindResource(horde3d.H3DResTypes_Material, "postHDR.material.xml")
 	// hdrParams: exposure, brightpass threshold, brightpass offset (see shader for description)
-	horde3d.SetMaterialUniform(matRes, "hdrParams", 2.5, 0.5, 0.08, 0)
+	//horde3d.SetMaterialUniform(matRes, "hdrParams", 2.5, 0.5, 0.08, 0)
 
 	//enable vertical sync if the card supports it
 	glfw.SetSwapInterval(1)
 
 	glfw.SetWindowTitle("Horde3d Knight demo implemented in Go")
 
-	//load resources paths separated by |
-	horde3d.LoadResourcesFromDisk("../content|" +
-		"../content/pipelines|" +
-		"../content/models|" +
-		"../content/materials|" +
-		"../content/shaders|" +
-		"../content/textures|" +
-		"../content/effects")
-
 	for running {
 		horde3d.Render(cam)
+		horde3d.DumpMessages()
 		glfw.SwapBuffers()
+
 		running = glfw.Key(glfw.KeyEsc) == 0 &&
 			glfw.WindowParam(glfw.Opened) == 1
 	}
 
-	horde3d.DumpMessages()
 	horde3d.Release()
 }
