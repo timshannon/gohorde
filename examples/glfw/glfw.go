@@ -41,24 +41,21 @@ func main() {
 		return
 	}
 
-	//ensure glfw is cleaned up
-	defer glfw.Terminate()
-
 	if err := glfw.OpenWindow(appWidth, appHeight, 8, 8, 8, 8,
 		24, 8, glfw.Windowed); err != nil {
 		fmt.Fprintf(os.Stderr, "[e] %v\n", err)
 		return
 	}
-	defer glfw.CloseWindow()
 
 	horde3d.Init()
 	// Add resources
 	//pipeline
-	hdrPipeline := horde3d.AddResource(horde3d.H3DResTypes_Pipeline, "hdr.pipeline.xml", 0)
+	pipeline := horde3d.AddResource(horde3d.H3DResTypes_Pipeline, "forward.pipeline.xml", 0)
 
 	//Add Scene Nodes
+	sphere := horde3d.AddNodes(horde3d.RootNode, "sphere.scene.xml")
 	//add camera
-	cam := horde3d.AddCameraNode(horde3d.RootNode, "Camera", hdrPipeline)
+	cam := horde3d.AddCameraNode(horde3d.RootNode, "Camera", pipeline)
 	//Setup Camera Viewport
 	horde3d.SetNodeParamI(cam, horde3d.H3DCamera_ViewportXI, 0)
 	horde3d.SetNodeParamI(cam, horde3d.H3DCamera_ViewportYI, 0)
@@ -98,4 +95,6 @@ func main() {
 
 	horde3d.DumpMessages()
 	horde3d.Release()
+	glfw.Terminate()
+	glfw.CloseWindow()
 }
