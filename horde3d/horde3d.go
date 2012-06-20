@@ -834,18 +834,12 @@ func SetNodeTransform(node H3DNode, tx float32, ty float32, tz float32,
 		C.float(rx), C.float(ry), C.float(rz), C.float(sx), C.float(sy), C.float(sz))
 }
 
-//TODO: Implement float array properly
-//func GetNodeTransMats(node H3DNode, relMat []float32, absMat []float32) {
-//TODO: Handle nil pointers, possibly check for nil
-//TODO: Fix this by handling the arrays properly
-//	var cRelMat unsafe.Pointer
-//	var cAbsmat unsafe.Pointer
+func GetNodeTransMats(node H3DNode, relMat []float32, absMat []float32) {
+	//TODO: Handle nil pointers, possibly check for nil
 
-//	defer C.free(cRelMat)
-//	defer C.free(cAbsmat)
-//	C.h3dGetNodeTransMats(C.H3DNode(node), (**C.float)(cRelMat),
-//		(**C.float)(cAbsmat))
-//}
+	C.h3dGetNodeTransMats(C.H3DNode(node), (**C.float)(unsafe.Pointer(&relMat[0])),
+		(**C.float)(unsafe.Pointer(&absMat[0])))
+}
 
 func SetNodeTransMat(node H3DNode, mat4x4 []float32) {
 	C.h3dSetNodeTransMat(C.H3DNode(node), (*C.float)(unsafe.Pointer(&mat4x4[0])))
