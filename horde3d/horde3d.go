@@ -64,20 +64,20 @@ GatherTimeStats     - Enables or disables gathering of time stats that are usefu
 */
 const (
 	_ = iota
-	H3DOptions_MaxLogLevel
-	H3DOptions_MaxNumMessages
-	H3DOptions_TrilinearFiltering
-	H3DOptions_MaxAnisotropy
-	H3DOptions_TexCompression
-	H3DOptions_SRGBLinearization
-	H3DOptions_LoadTextures
-	H3DOptions_FastAnimation
-	H3DOptions_ShadowMapSize
-	H3DOptions_SampleCount
-	H3DOptions_WireframeMode
-	H3DOptions_DebugViewMode
-	H3DOptions_DumpFailedShaders
-	H3DOptions_GatherTimeStats
+	Options_MaxLogLevel
+	Options_MaxNumMessages
+	ptions_TrilinearFiltering
+	Options_MaxAnisotropy
+	Options_TexCompression
+	Options_SRGBLinearization
+	Options_LoadTextures
+	Options_FastAnimation
+	Options_ShadowMapSize
+	Options_SampleCount
+	Options_WireframeMode
+	Options_DebugViewMode
+	Options_DumpFailedShaders
+	Options_GatherTimeStats
 )
 
 /* Enum: H3DStats
@@ -99,19 +99,19 @@ GeometryVMem      - Estimated amount of video memory used by geometry (in Mb)
 */
 const (
 	_ = iota + 100
-	H3DStats_TriCount
-	H3DStats_BatchCount
-	H3DStats_LightPassCount
-	H3DStats_FrameTime
-	H3DStats_AnimationTime
-	H3DStats_GeoUpdateTime
-	H3DStats_ParticleSimTime
-	H3DStats_FwdLightsGPUTime
-	H3DStats_DefLightsGPUTime
-	H3DStats_ShadowsGPUTime
-	H3DStats_ParticleGPUTime
-	H3DStats_TextureVMem
-	H3DStats_GeometryVMem
+	Stats_TriCount
+	Stats_BatchCount
+	Stats_LightPassCount
+	Stats_FrameTime
+	Stats_AnimationTime
+	Stats_GeoUpdateTime
+	Stats_ParticleSimTime
+	Stats_FwdLightsGPUTime
+	Stats_DefLightsGPUTime
+	Stats_ShadowsGPUTime
+	Stats_ParticleGPUTime
+	Stats_TextureVMem
+	Stats_GeometryVMem
 )
 
 /* Enum: H3DResTypes
@@ -129,16 +129,16 @@ ParticleEffect  - Particle configuration
 Pipeline        - Rendering pipeline
 */
 const (
-	H3DResTypes_Undefined = iota
-	H3DResTypes_SceneGraph
-	H3DResTypes_Geometry
-	H3DResTypes_Animation
-	H3DResTypes_Material
-	H3DResTypes_Code
-	H3DResTypes_Shader
-	H3DResTypes_Texture
-	H3DResTypes_ParticleEffect
-	H3DResTypes_Pipeline
+	ResTypes_Undefined = iota
+	ResTypes_SceneGraph
+	ResTypes_Geometry
+	ResTypes_Animation
+	ResTypes_Material
+	ResTypes_Code
+	ResTypes_Shader
+	ResTypes_Texture
+	ResTypes_ParticleEffect
+	ResTypes_Pipeline
 )
 
 /* Enum: H3DResFlags
@@ -154,13 +154,13 @@ TexSRGB           - Indicates that Texture resource is in sRGB color space and s
                     to linear space when being sampled.
 */
 const (
-	H3DResFlags_NoQuery          = 1
-	H3DResFlags_NoTexCompression = 2
-	H3DResFlags_NoTexMipmaps     = 4
-	H3DResFlags_TexCubemap       = 8
-	H3DResFlags_TexDynamic       = 16
-	H3DResFlags_TexRenderable    = 32
-	H3DResFlags_TexSRGB          = 64
+	ResFlags_NoQuery          = 1
+	ResFlags_NoTexCompression = 2
+	ResFlags_NoTexMipmaps     = 4
+	ResFlags_TexCubemap       = 8
+	ResFlags_TexDynamic       = 16
+	ResFlags_TexRenderable    = 32
+	ResFlags_TexSRGB          = 64
 )
 
 /* Enum: H3DFormats
@@ -175,13 +175,13 @@ TEX_RGBA16F  - Half float RGBA texture
 TEX_RGBA32F  - Float RGBA texture
 */
 const (
-	H3DFormats_Unknown = iota
-	H3DFormats_TEX_BGRA8
-	H3DFormats_TEX_DXT1
-	H3DFormats_TEX_DXT3
-	H3DFormats_TEX_DXT5
-	H3DFormats_TEX_RGBA16F
-	H3DFormats_TEX_RGBA32F
+	Formats_Unknown = iota
+	Formats_TEX_BGRA8
+	Formats_TEX_DXT1
+	Formats_TEX_DXT3
+	Formats_TEX_DXT5
+	Formats_TEX_RGBA16F
+	Formats_TEX_RGBA32F
 )
 
 /* Enum: H3DGeoRes
@@ -199,17 +199,17 @@ GeoVertStaticStream  - Vertex static attribute data (float u0, v0,
 */
 const (
 	_ = iota + 200
-	H3DGeoRes_GeometryElem
-	H3DGeoRes_GeoIndexCountI
-	H3DGeoRes_GeoVertexCountI
-	H3DGeoRes_GeoIndices16I
-	H3DGeoRes_GeoIndexStream
-	H3DGeoRes_GeoVertPosStream
-	H3DGeoRes_GeoVertTanStream
-	H3DGeoRes_GeoVertStaticStream
+	GeoRes_GeometryElem
+	GeoRes_GeoIndexCountI
+	GeoRes_GeoVertexCountI
+	GeoRes_GeoIndices16I
+	GeoRes_GeoIndexStream
+	GeoRes_GeoVertPosStream
+	GeoRes_GeoVertTanStream
+	GeoRes_GeoVertStaticStream
 )
 
-/* Enum: H3DAnimRes
+/* Enum: AnimRes
 	The available Animation resource accessors.	  
 
 EntityElem      - Stored animation entities (joints and meshes)
@@ -217,11 +217,11 @@ EntFrameCountI  - Number of frames stored for a specific entity [read-only]
 */
 const (
 	_ = iota + 300
-	H3DAnimRes_EntityElem
-	H3DAnimRes_EntFrameCountI
+	AnimRes_EntityElem
+	AnimRes_EntFrameCountI
 )
 
-/* Enum: H3DMatRes
+/* Enum: MatRes
 	The available Material resource accessors.
 
 MaterialElem  - Base element
@@ -237,19 +237,19 @@ UnifValueF4   - Value of uniform (a, b, c, d)
 */
 const (
 	_ = iota + 400
-	H3DMatRes_MaterialElem
-	H3DMatRes_SamplerElem
-	H3DMatRes_UniformElem
-	H3DMatRes_MatClassStr
-	H3DMatRes_MatLinkI
-	H3DMatRes_MatShaderI
-	H3DMatRes_SampNameStr
-	H3DMatRes_SampTexResI
-	H3DMatRes_UnifNameStr
-	H3DMatRes_UnifValueF4
+	MatRes_MaterialElem
+	MatRes_SamplerElem
+	MatRes_UniformElem
+	MatRes_MatClassStr
+	MatRes_MatLinkI
+	MatRes_MatShaderI
+	MatRes_SampNameStr
+	MatRes_SampTexResI
+	MatRes_UnifNameStr
+	MatRes_UnifValueF4
 )
 
-/* Enum: H3DShaderRes
+/* Enum: ShaderRes
 	The available Shader resource accessors.
 
 ContextElem     - Context element 
@@ -263,17 +263,17 @@ UnifDefValueF4  - Default value of uniform (a, b, c, d)
 */
 const (
 	_ = iota + 600
-	H3DShaderRes_ContextElem
-	H3DShaderRes_SamplerElem
-	H3DShaderRes_UniformElem
-	H3DShaderRes_ContNameStr
-	H3DShaderRes_SampNameStr
-	H3DShaderRes_UnifNameStr
-	H3DShaderRes_UnifSizeI
-	H3DShaderRes_UnifDefValueF4
+	ShaderRes_ContextElem
+	ShaderRes_SamplerElem
+	ShaderRes_UniformElem
+	ShaderRes_ContNameStr
+	ShaderRes_SampNameStr
+	ShaderRes_UnifNameStr
+	ShaderRes_UnifSizeI
+	ShaderRes_UnifDefValueF4
 )
 
-/* Enum: H3DTexRes
+/* Enum: TexRes
 	The available Texture resource accessors.
 
 TextureElem     - Base element
@@ -292,16 +292,16 @@ ImgPixelStream  - Pixel data of an image. The data layout matches the layout spe
 */
 const (
 	_ = iota + 700
-	H3DTexRes_TextureElem
-	H3DTexRes_ImageElem
-	H3DTexRes_TexFormatI
-	H3DTexRes_TexSliceCountI
-	H3DTexRes_ImgWidthI
-	H3DTexRes_ImgHeightI
-	H3DTexRes_ImgPixelStream
+	TexRes_TextureElem
+	TexRes_ImageElem
+	TexRes_TexFormatI
+	TexRes_TexSliceCountI
+	TexRes_ImgWidthI
+	TexRes_ImgHeightI
+	TexRes_ImgPixelStream
 )
 
-/* Enum: H3DPartEffRes
+/* Enum: PartEffRes
 	The available ParticleEffect resource accessors.
 
 ParticleElem     - General particle configuration
@@ -320,23 +320,23 @@ ChanEndRateF     - Remaining percentage of initial value when particle is dying
 */
 const (
 	_ = iota + 800
-	H3DPartEffRes_ParticleElem
-	H3DPartEffRes_ChanMoveVelElem
-	H3DPartEffRes_ChanRotVelElem
-	H3DPartEffRes_ChanSizeElem
-	H3DPartEffRes_ChanColRElem
-	H3DPartEffRes_ChanColGElem
-	H3DPartEffRes_ChanColBElem
-	H3DPartEffRes_ChanColAElem
-	H3DPartEffRes_PartLifeMinF
-	H3DPartEffRes_PartLifeMaxF
-	H3DPartEffRes_ChanStartMinF
-	H3DPartEffRes_ChanStartMaxF
-	H3DPartEffRes_ChanEndRateF
-	H3DPartEffRes_ChanDragElem
+	PartEffRes_ParticleElem
+	PartEffRes_ChanMoveVelElem
+	PartEffRes_ChanRotVelElem
+	PartEffRes_ChanSizeElem
+	PartEffRes_ChanColRElem
+	PartEffRes_ChanColGElem
+	PartEffRes_ChanColBElem
+	PartEffRes_ChanColAElem
+	PartEffRes_PartLifeMinF
+	PartEffRes_PartLifeMaxF
+	PartEffRes_ChanStartMinF
+	PartEffRes_ChanStartMaxF
+	PartEffRes_ChanEndRateF
+	PartEffRes_ChanDragElem
 )
 
-/* Enum: H3DPipeRes
+/* Enum: PipeRes
 	The available Pipeline resource accessors.
 
 StageElem         - Pipeline stage
@@ -345,12 +345,12 @@ StageActivationI  - Flag indicating whether stage is active
 */
 const (
 	_ = iota + 900
-	H3DPipeRes_StageElem
-	H3DPipeRes_StageNameStr
-	H3DPipeRes_StageActivationI
+	PipeRes_StageElem
+	PipeRes_StageNameStr
+	PipeRes_StageActivationI
 )
 
-/*	Enum: H3DNodeTypes
+/*	Enum: NodeTypes
 		The available scene node types.
 
 	Undefined  - An undefined node type, returned by getNodeType in case of error
@@ -363,17 +363,17 @@ const (
 	Emitter    - Particle system emitter
 */
 const (
-	H3DNodeTypes_Undefined = iota
-	H3DNodeTypes_Group
-	H3DNodeTypes_Model
-	H3DNodeTypes_Mesh
-	H3DNodeTypes_Joint
-	H3DNodeTypes_Light
-	H3DNodeTypes_Camera
-	H3DNodeTypes_Emitter
+	NodeTypes_Undefined = iota
+	NodeTypes_Group
+	NodeTypes_Model
+	NodeTypes_Mesh
+	NodeTypes_Joint
+	NodeTypes_Light
+	NodeTypes_Camera
+	NodeTypes_Emitter
 )
 
-/*	Enum: H3DNodeFlags
+/*	Enum: NodeFlags
 		The available scene node flags.
 
 	NoDraw         - Excludes scene node from all rendering
@@ -383,13 +383,13 @@ const (
 	                 (combination of all flags above)
 */
 const (
-	H3DNodeFlags_NoDraw       = 1
-	H3DNodeFlags_NoCastShadow = 2
-	H3DNodeFlags_NoRayQuery   = 4
-	H3DNodeFlags_Inactive     = 7 // NoDraw | NoCastShadow | NoRayQuery
+	NodeFlags_NoDraw       = 1
+	NodeFlags_NoCastShadow = 2
+	NodeFlags_NoRayQuery   = 4
+	NodeFlags_Inactive     = 7 // NoDraw | NoCastShadow | NoRayQuery
 )
 
-/*	Enum: H3DNodeParams
+/*	Enum: NodeParams
 		The available scene node parameters.
 
 	NameStr        - Name of the scene node
@@ -397,11 +397,11 @@ const (
 	                 in an 'Attachment' XML string
 */
 const (
-	H3DNodeParams_NameStr = 1
-	H3DNodeParams_AttachmentStr
+	NodeParams_NameStr = 1
+	NodeParams_AttachmentStr
 )
 
-/*	Enum: H3DModel
+/*	Enum: Model
 		The available Model node parameters
 
 	GeoResI      - Geometry resource used for the model
@@ -416,16 +416,16 @@ const (
 	               (may not be smaller than LodDist3) (default: infinite)
 */
 const (
-	_                         = iota + 200
-	H3DModel_H3DModel_GeoResI = 200
-	H3DModel_SWSkinningI
-	H3DModel_LodDist1F
-	H3DModel_LodDist2F
-	H3DModel_LodDist3F
-	H3DModel_LodDist4F
+	_             = iota + 200
+	Model_GeoResI = 200
+	Model_SWSkinningI
+	Model_LodDist1F
+	Model_LodDist2F
+	Model_LodDist3F
+	Model_LodDist4F
 )
 
-/*	Enum: H3DMesh
+/*	Enum: Mesh
 		The available Mesh node parameters.
 
 	MatResI      - Material resource used for the mesh
@@ -438,24 +438,24 @@ const (
 */
 const (
 	_ = iota + 300
-	H3DMesh_MatResI
-	H3DMesh_BatchStartI
-	H3DMesh_BatchCountI
-	H3DMesh_VertRStartI
-	H3DMesh_VertREndI
-	H3DMesh_LodLevelI
+	Mesh_MatResI
+	Mesh_BatchStartI
+	Mesh_BatchCountI
+	Mesh_VertRStartI
+	Mesh_VertREndI
+	Mesh_LodLevelI
 )
 
-/*	Enum: H3DJoint
+/*	Enum: Joint
 		The available Joint node parameters.
 
 	JointIndexI  - Index of joint in Geometry resource of parent Model node [read-only]
 */
 const (
-	H3DJoint_JointIndexI = 400
+	Joint_JointIndexI = 400
 )
 
-/*	Enum: H3DLight
+/*	Enum: Light
 		The available Light node parameters.
 
 	MatResI             - Material resource used for the light
@@ -471,19 +471,19 @@ const (
 */
 const (
 	_ = iota + 500
-	H3DLight_MatResI
-	H3DLight_RadiusF
-	H3DLight_FovF
-	H3DLight_ColorF3
-	H3DLight_ColorMultiplierF
-	H3DLight_ShadowMapCountI
-	H3DLight_ShadowSplitLambdaF
-	H3DLight_ShadowMapBiasF
-	H3DLight_LightingContextStr
-	H3DLight_ShadowContextStr
+	Light_MatResI
+	Light_RadiusF
+	Light_FovF
+	Light_ColorF3
+	Light_ColorMultiplierF
+	Light_ShadowMapCountI
+	Light_ShadowSplitLambdaF
+	Light_ShadowMapBiasF
+	Light_LightingContextStr
+	Light_ShadowContextStr
 )
 
-/*	Enum: H3DCamera
+/*	Enum: Camera
 		The available Camera node parameters.
 
 	PipeResI         - Pipeline resource used for rendering
@@ -505,24 +505,24 @@ const (
 
 const (
 	_ = iota + 600
-	H3DCamera_PipeResI
-	H3DCamera_OutTexResI
-	H3DCamera_OutBufIndexI
-	H3DCamera_LeftPlaneF
-	H3DCamera_RightPlaneF
-	H3DCamera_BottomPlaneF
-	H3DCamera_TopPlaneF
-	H3DCamera_NearPlaneF
-	H3DCamera_FarPlaneF
-	H3DCamera_ViewportXI
-	H3DCamera_ViewportYI
-	H3DCamera_ViewportWidthI
-	H3DCamera_ViewportHeightI
-	H3DCamera_OrthoI
-	H3DCamera_OccCullingI
+	Camera_PipeResI
+	Camera_OutTexResI
+	Camera_OutBufIndexI
+	Camera_LeftPlaneF
+	Camera_RightPlaneF
+	Camera_BottomPlaneF
+	Camera_TopPlaneF
+	Camera_NearPlaneF
+	Camera_FarPlaneF
+	Camera_ViewportXI
+	Camera_ViewportYI
+	Camera_ViewportWidthI
+	Camera_ViewportHeightI
+	Camera_OrthoI
+	Camera_OccCullingI
 )
 
-/*	Enum: H3DEmitter
+/*	Enum: Emitter
 		The available Emitter node parameters.
 
 	MatResI        - Material resource used for rendering
@@ -536,14 +536,14 @@ const (
 */
 const (
 	_ = iota + 700
-	H3DEmitter_MatResI
-	H3DEmitter_PartEffResI
-	H3DEmitter_MaxCountI
-	H3DEmitter_RespawnCountI
-	H3DEmitter_DelayF
-	H3DEmitter_EmissionRateF
-	H3DEmitter_SpreadAngleF
-	H3DEmitter_ForceF3
+	Emitter_MatResI
+	Emitter_PartEffResI
+	Emitter_MaxCountI
+	Emitter_RespawnCountI
+	Emitter_DelayF
+	Emitter_EmissionRateF
+	Emitter_SpreadAngleF
+	Emitter_ForceF3
 )
 
 //used for bools from c interfaces

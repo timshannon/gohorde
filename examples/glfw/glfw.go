@@ -52,33 +52,13 @@ func main() {
 	defer glfw.CloseWindow()
 
 	horde3d.Init()
+
+	horde3d.SetOption(horde3d.Options_DebugViewMode, 1)
 	// Add resources
 	//pipeline
-	hdrPipeline := horde3d.AddResource(horde3d.H3DResTypes_Pipeline, "hdr.pipeline.xml", 0)
+	pipeRes := horde3d.AddResource(horde3d.ResTypes_Pipeline, "hdr.pipeline.xml", 0)
 
-	//Add Scene Nodes
-	//add camera
-	cam := horde3d.AddCameraNode(horde3d.RootNode, "Camera", hdrPipeline)
-	//Setup Camera Viewport
-	horde3d.SetNodeParamI(cam, horde3d.H3DCamera_ViewportXI, 0)
-	horde3d.SetNodeParamI(cam, horde3d.H3DCamera_ViewportYI, 0)
-	horde3d.SetNodeParamI(cam, horde3d.H3DCamera_ViewportWidthI, appWidth)
-	horde3d.SetNodeParamI(cam, horde3d.H3DCamera_ViewportHeightI, appHeight)
-	// Add light source
-	light := horde3d.AddLightNode(horde3d.RootNode, "Light1", 0, "LIGHTING", "SHADOWMAP")
-	horde3d.SetNodeTransform(light, 0, 15, 10, -60, 0, 0, 1, 1, 1)
-	horde3d.SetNodeParamF(light, horde3d.H3DLight_RadiusF, 0, 30)
-	horde3d.SetNodeParamF(light, horde3d.H3DLight_FovF, 0, 90)
-	horde3d.SetNodeParamI(light, horde3d.H3DLight_ShadowMapCountI, 1)
-	horde3d.SetNodeParamF(light, horde3d.H3DLight_ShadowMapBiasF, 0, 0.01)
-	horde3d.SetNodeParamF(light, horde3d.H3DLight_ColorF3, 0, 1.0)
-	horde3d.SetNodeParamF(light, horde3d.H3DLight_ColorF3, 1, 0.8)
-	horde3d.SetNodeParamF(light, horde3d.H3DLight_ColorF3, 2, 0.7)
-
-	//enable vertical sync if the card supports it
-	glfw.SetSwapInterval(1)
-
-	glfw.SetWindowTitle(caption)
+	sphereRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "sphere/sphere.scene.xml", 0)
 
 	//load resources paths separated by |
 	horde3d.LoadResourcesFromDisk("../content|" +
@@ -89,8 +69,35 @@ func main() {
 		"../content/textures|" +
 		"../content/effects")
 
+	model := horde3d.AddNodes(horde3d.RootNode, sphereRes)
+
+	// Add light source
+	light := horde3d.AddLightNode(horde3d.RootNode, "Light1", 0, "LIGHTING", "SHADOWMAP")
+	horde3d.SetNodeTransform(light, 0, 20, 0, 0, 0, 0, 1, 1, 1)
+	horde3d.SetNodeParamF(light, horde3d.Light_RadiusF, 0, 50)
+
+	//add camera
+	cam := horde3d.AddCameraNode(horde3d.RootNode, "Camera", pipeRes)
+	//Setup Camera Viewport
+	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportXI, 0)
+	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportYI, 0)
+	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportWidthI, appWidth)
+	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportHeightI, appHeight)
+	horde3d.SetupCameraView(cam, 45, float32(appWidth)/float32(appHeight), 0.5, 2048)
+	horde3d.ResizePipelineBuffers(pipeRes, appWidth, appHeight)
+	//enable vertical sync if the card supports it
+	glfw.SetSwapInterval(1)
+
+	glfw.SetWindowTitle(caption)
+
+	var i float32 = 5
 	for running {
+
+		i += 1
+		horde3d.SetNodeTransform(model, 0, 0, i, 0, 0, 0, 1, 1, 1)
+
 		horde3d.Render(cam)
+		horde3d.FinalizeFrame()
 		glfw.SwapBuffers()
 		running = glfw.Key(glfw.KeyEsc) == 0 &&
 			glfw.WindowParam(glfw.Opened) == 1
