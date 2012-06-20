@@ -51,6 +51,7 @@ func main() {
 	}
 	defer glfw.CloseWindow()
 
+	glfw.SetWindowTitle(caption)
 	horde3d.Init()
 
 	horde3d.SetOption(horde3d.Options_DebugViewMode, 1)
@@ -58,7 +59,7 @@ func main() {
 	//pipeline
 	pipeRes := horde3d.AddResource(horde3d.ResTypes_Pipeline, "hdr.pipeline.xml", 0)
 
-	sphereRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "sphere/sphere.scene.xml", 0)
+	sphereRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "knight/knight.scene.xml", 0)
 
 	//load resources paths separated by |
 	horde3d.LoadResourcesFromDisk("../content|" +
@@ -70,6 +71,7 @@ func main() {
 		"../content/effects")
 
 	model := horde3d.AddNodes(horde3d.RootNode, sphereRes)
+	horde3d.SetNodeTransform(model, 0, 0, 0, 0, 180, 0, 0.1, 0.1, 0.1)
 
 	// Add light source
 	light := horde3d.AddLightNode(horde3d.RootNode, "Light1", 0, "LIGHTING", "SHADOWMAP")
@@ -88,13 +90,7 @@ func main() {
 	//enable vertical sync if the card supports it
 	glfw.SetSwapInterval(1)
 
-	glfw.SetWindowTitle(caption)
-
-	var i float32 = 5
 	for running {
-
-		i += 1
-		horde3d.SetNodeTransform(model, 0, 0, i, 0, 0, 0, 1, 1, 1)
 
 		horde3d.Render(cam)
 		horde3d.FinalizeFrame()
