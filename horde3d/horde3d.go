@@ -676,9 +676,8 @@ func IsResLoaded(res H3DRes) bool {
 	return Bool[int(C.h3dIsResLoaded(C.H3DRes(res)))]
 }
 
-func LoadResource(res H3DRes, data *string, size int) bool {
-	//TODO: Can I use a data []byte instead?
-	return Bool[int(C.h3dLoadResource(C.H3DRes(res), (*C.char)(unsafe.Pointer(data)), C.int(size)))]
+func LoadResource(res H3DRes, data []byte, size int) bool {
+	return Bool[int(C.h3dLoadResource(C.H3DRes(res), (*C.char)(unsafe.Pointer(&data[0])), C.int(size)))]
 }
 
 func UnloadResource(res H3DRes) {
@@ -727,7 +726,6 @@ func SetResParamStr(res H3DRes, elem int, elemIdx int, param int, value string) 
 }
 
 func MapResStream(res H3DRes, elem int, elemIdx int, stream int, read bool, write bool, size int) []byte {
-	//TODO: Review this method of getting the stream data from the pointer 
 
 	cStream := C.h3dMapResStream(C.H3DRes(res), C.int(elem), C.int(elemIdx), C.int(stream),
 		Int[read], Int[write])
@@ -905,13 +903,14 @@ func CastRay(node H3DNode, ox float32, oy float32, oz float32,
 		C.float(dx), C.float(dy), C.float(dz), C.int(numNearest)))
 }
 
-//TODO: Implement float array properly
-//func GetCastRayResult(index int, node *H3DNode, distance *float32, intersection []float32) bool {
-//
-//}
+func GetCastRayResult(index int, node *H3DNode, distance *float32, intersection []float32) bool {
+	return Bool[int(C.h3dGetCastRayResult(C.int(index), (*C.H3DNode)(unsafe.Pointer(node)),
+		(*C.float)(unsafe.Pointer(distance)), (*C.float)(unsafe.Pointer(&intersection[0]))))]
+}
 
 func CheckNodeVisibility(node H3DNode, cameraNode H3DNode, checkOcclusion bool, calcLod bool) int {
-	return int(C.h3dCheckNodeVisibility(C.H3DNode(node), C.H3DNode(cameraNode), Int[checkOcclusion], Int[calcLod]))
+	return int(C.h3dCheckNodeVisibility(C.H3DNode(node), C.H3DNode(cameraNode),
+		Int[checkOcclusion], Int[calcLod]))
 }
 
 func AddGroupNode(parent H3DNode, name string) H3DNode {
@@ -984,11 +983,10 @@ func SetupCameraView(cameraNode H3DNode, fov float32, aspect float32,
 		C.float(nearDist), C.float(farDist))
 }
 
-//TODO: Float arrays
-//func GetCameraProjMat(cameraNode H3DNode, projMat []float32) {
+func GetCameraProjMat(cameraNode H3DNode, projMat []float32) {
 
-//C.h3dGetCameraProjMat(C.H3DNode(cameraNode), 
-//}
+	C.h3dGetCameraProjMat(C.H3DNode(cameraNode), (*C.float)(unsafe.Pointer(&projMat[0])))
+}
 
 func AddEmitterNode(parent H3DNode, name string, materialRes H3DRes, particleEffectRes H3DRes,
 	maxParticleCount int, respawnCount int) H3DNode {
