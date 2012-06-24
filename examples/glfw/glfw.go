@@ -33,6 +33,8 @@ const (
 	appHeight = 600
 )
 
+var pipeRes horde3d.H3DRes
+
 func main() {
 	var running bool = true
 
@@ -51,15 +53,20 @@ func main() {
 	}
 	defer glfw.CloseWindow()
 
+	glfw.SetSwapInterval(1)
 	glfw.SetWindowTitle(caption)
-	horde3d.Init()
+	if !horde3d.Init() {
+		fmt.Println("Error starting Horde3D. Check Horde3d_log.html for details.")
+		horde3d.DumpMessages()
+		return
+	}
 
 	horde3d.SetOption(horde3d.Options_DebugViewMode, 1)
 	// Add resources
 	//pipeline
-	pipeRes := horde3d.AddResource(horde3d.ResTypes_Pipeline, "hdr.pipeline.xml", 0)
+	pipeRes = horde3d.AddResource(horde3d.ResTypes_Pipeline, "hdr.pipeline.xml", 0)
 
-	sphereRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "knight/knight.scene.xml", 0)
+	knightRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "knight/knight.scene.xml", 0)
 
 	//load resources paths separated by |
 	horde3d.LoadResourcesFromDisk("../content|" +
@@ -70,8 +77,8 @@ func main() {
 		"../content/textures|" +
 		"../content/effects")
 
-	model := horde3d.AddNodes(horde3d.RootNode, sphereRes)
-	horde3d.SetNodeTransform(model, 0, 0, 0, 0, 180, 0, 0.1, 0.1, 0.1)
+	model := horde3d.AddNodes(horde3d.RootNode, knightRes)
+	horde3d.SetNodeTransform(model, 0, 0, 300, 0, 180, 0, 0.1, 0.1, 0.1)
 
 	// Add light source
 	light := horde3d.AddLightNode(horde3d.RootNode, "Light1", 0, "LIGHTING", "SHADOWMAP")
@@ -85,20 +92,18 @@ func main() {
 	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportYI, 0)
 	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportWidthI, appWidth)
 	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportHeightI, appHeight)
-	horde3d.SetupCameraView(cam, 45, float32(appWidth)/float32(appHeight), 0.5, 2048)
+	horde3d.SetupCameraView(cam, 45, float32(appWidth)/float32(appHeight), 0.1, 1000)
 	horde3d.ResizePipelineBuffers(pipeRes, appWidth, appHeight)
-	//enable vertical sync if the card supports it
-	glfw.SetSwapInterval(1)
 
 	for running {
 
 		horde3d.Render(cam)
 		horde3d.FinalizeFrame()
+		horde3d.DumpMessages()
 		glfw.SwapBuffers()
 		running = glfw.Key(glfw.KeyEsc) == 0 &&
 			glfw.WindowParam(glfw.Opened) == 1
 	}
 
-	horde3d.DumpMessages()
 	horde3d.Release()
 }

@@ -51,54 +51,46 @@ func main() {
 	}
 	defer glfw.CloseWindow()
 
-	horde3d.Init()
+	if !horde3d.Init() {
+		horde3d.DumpMessages()
+		return
+	}
+
 	// Set options
 	horde3d.SetOption(horde3d.Options_LoadTextures, 1)
 	horde3d.SetOption(horde3d.Options_TexCompression, 0)
 	horde3d.SetOption(horde3d.Options_FastAnimation, 0)
-	horde3d.SetOption(horde3d.Options_MaxAnisotropy, 8)
+	horde3d.SetOption(horde3d.Options_MaxAnisotropy, 4)
 	horde3d.SetOption(horde3d.Options_ShadowMapSize, 2048)
 
+	glfw.Disable(glfw.MouseCursor)
+
 	// Add resources
-	//pipeline
-	hdrPipeline := horde3d.AddResource(horde3d.ResTypes_Pipeline, "hdr.pipeline.xml", 0)
+	// Pipelines
+	hdrPipeRes := horde3d.AddResource(horde3d.ResTypes_Pipeline, "pipelines/hdr.pipeline.xml", 0)
+	//forwardPipeRes := horde3d.AddResource(horde3d.ResTypes_Pipeline, "pipelines/forward.pipeline.xml", 0)
+	// Overlays
+	//fontMatRes := horde3d.AddResource(horde3d.ResTypes_Material, "overlays/font.material.xml", 0)
+	//panelMatRes := horde3d.AddResource(horde3d.ResTypes_Material, "overlays/panel.material.xml", 0)
+	//logoMatRes := horde3d.AddResource(horde3d.ResTypes_Material, "overlays/logo.material.xml", 0)
 
-	// Font
-	//fontMatRes := horde3d.AddResource(horde3d.ResTypes_Material, "font.material.xml", 0)
-	// Logo
-	//logoMatRes := horde3d.AddResource(horde3d.ResTypes_Material, "logo.material.xml", 0)
 	// Environment
-	envRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "sphere.scene.xml", 0)
+	envRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "models/sphere/sphere.scene.xml", 0)
 	// Knight
-	knightRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "knight.scene.xml", 0)
-	knightAnim1Res := horde3d.AddResource(horde3d.ResTypes_Animation, "knight_order.anim", 0)
-	knightAnim2Res := horde3d.AddResource(horde3d.ResTypes_Animation, "knight_attack.anim", 0)
+	knightRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "models/knight/knight.scene.xml", 0)
+	knightAnim1Res := horde3d.AddResource(horde3d.ResTypes_Animation, "animations/knight_order.anim", 0)
+	knightAnim2Res := horde3d.AddResource(horde3d.ResTypes_Animation, "animations/knight_attack.anim", 0)
 	// Particle system
-	particleSysRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "particleSys1.scene.xml", 0)
+	particleSysRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "particles/particleSys1/particleSys1.scene.xml", 0)
 
-	//load resources paths separated by |
-	horde3d.LoadResourcesFromDisk("../content|" +
-		"../content/pipelines|" +
-		"../content/models|" +
-		"../content/materials|" +
-		"../content/shaders|" +
-		"../content/textures|" +
-		"../content/animations|" +
-		"../content/particles|" +
-		"../content/models/sphere|" +
-		"../content/models/knight|" +
-		"../content/particles/particleSys1|" +
-		"../content/effects")
+	// Load resources
+	horde3d.LoadResourcesFromDisk("../Content")
 
-	//Add Scene Nodes
-	//add camera
-	cam := horde3d.AddCameraNode(horde3d.RootNode, "Camera", hdrPipeline)
-	//Setup Camera Viewport
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportXI, 0)
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportYI, 0)
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportWidthI, appWidth)
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportHeightI, appHeight)
-	//env
+	// Add scene nodes
+	// Add camera
+	cam := horde3d.AddCameraNode(horde3d.RootNode, "Camera", hdrPipeRes)
+	//horde3d.SetNodeParamI( _cam, horde3d.Camera::OccCullingI, 1 );
+	// Add environment
 	env := horde3d.AddNodes(horde3d.RootNode, envRes)
 	horde3d.SetNodeTransform(env, 0, -20, 0, 0, 0, 0, 20, 20, 20)
 	// Add knight
@@ -117,24 +109,23 @@ func main() {
 	horde3d.SetNodeTransform(light, 0, 15, 10, -60, 0, 0, 1, 1, 1)
 	horde3d.SetNodeParamF(light, horde3d.Light_RadiusF, 0, 30)
 	horde3d.SetNodeParamF(light, horde3d.Light_FovF, 0, 90)
-	//horde3d.SetNodeParamI(light, horde3d.Light_ShadowMapCountI, 1)
-	//horde3d.SetNodeParamF(light, horde3d.Light_ShadowMapBiasF, 0, 0.01)
-	horde3d.SetNodeParamF(light, horde3d.Light_ColorF3, 1, 1.0)
-	horde3d.SetNodeParamF(light, horde3d.Light_ColorF3, 2, 0.8)
-	horde3d.SetNodeParamF(light, horde3d.Light_ColorF3, 3, 0.7)
+	horde3d.SetNodeParamI(light, horde3d.Light_ShadowMapCountI, 1)
+	horde3d.SetNodeParamF(light, horde3d.Light_ShadowMapBiasF, 0, 0.01)
+	horde3d.SetNodeParamF(light, horde3d.Light_ColorF3, 0, 1.0)
+	horde3d.SetNodeParamF(light, horde3d.Light_ColorF3, 1, 0.8)
+	horde3d.SetNodeParamF(light, horde3d.Light_ColorF3, 2, 0.7)
+	horde3d.SetNodeParamF(light, horde3d.Light_ColorMultiplierF, 0, 1.0)
 
 	// Customize post processing effects
-	//matRes := horde3d.FindResource(horde3d.ResTypes_Material, "postHDR.material.xml")
-	// hdrParams: exposure, brightpass threshold, brightpass offset (see shader for description)
-	//horde3d.SetMaterialUniform(matRes, "hdrParams", 2.5, 0.5, 0.08, 0)
-
-	//enable vertical sync if the card supports it
-	glfw.SetSwapInterval(1)
-
-	glfw.SetWindowTitle("Horde3d Knight demo implemented in Go")
+	matRes := horde3d.FindResource(horde3d.ResTypes_Material, "pipelines/postHDR.material.xml")
+	horde3d.SetMaterialUniform(matRes, "hdrExposure", 2.5, 0, 0, 0)
+	horde3d.SetMaterialUniform(matRes, "hdrBrightThres", 0.5, 0, 0, 0)
+	horde3d.SetMaterialUniform(matRes, "hdrBrightOffset", 0.08, 0, 0, 0)
 
 	for running {
 		horde3d.Render(cam)
+		horde3d.FinalizeFrame()
+		horde3d.ClearOverlays()
 		horde3d.DumpMessages()
 		glfw.SwapBuffers()
 
