@@ -98,8 +98,7 @@ TextureVMem       - Estimated amount of video memory used by textures (in Mb)
 GeometryVMem      - Estimated amount of video memory used by geometry (in Mb)
 */
 const (
-	_ = iota + 100
-	Stats_TriCount
+	Stats_TriCount = iota + 100
 	Stats_BatchCount
 	Stats_LightPassCount
 	Stats_FrameTime
@@ -198,8 +197,7 @@ GeoVertStaticStream  - Vertex static attribute data (float u0, v0,
                          float4 jointIndices, float4 jointWeights, float u1, v1)
 */
 const (
-	_ = iota + 200
-	GeoRes_GeometryElem
+	GeoRes_GeometryElem = iota + 200
 	GeoRes_GeoIndexCountI
 	GeoRes_GeoVertexCountI
 	GeoRes_GeoIndices16I
@@ -216,8 +214,7 @@ EntityElem      - Stored animation entities (joints and meshes)
 EntFrameCountI  - Number of frames stored for a specific entity [read-only]
 */
 const (
-	_ = iota + 300
-	AnimRes_EntityElem
+	AnimRes_EntityElem = iota + 300
 	AnimRes_EntFrameCountI
 )
 
@@ -236,8 +233,7 @@ UnifNameStr   - Name of uniform [read-only]
 UnifValueF4   - Value of uniform (a, b, c, d)
 */
 const (
-	_ = iota + 400
-	MatRes_MaterialElem
+	MatRes_MaterialElem = iota + 400
 	MatRes_SamplerElem
 	MatRes_UniformElem
 	MatRes_MatClassStr
@@ -262,8 +258,7 @@ UnifSizeI       - Size (number of components) of uniform [read-only]
 UnifDefValueF4  - Default value of uniform (a, b, c, d)
 */
 const (
-	_ = iota + 600
-	ShaderRes_ContextElem
+	ShaderRes_ContextElem = iota + 600
 	ShaderRes_SamplerElem
 	ShaderRes_UniformElem
 	ShaderRes_ContNameStr
@@ -291,8 +286,7 @@ ImgPixelStream  - Pixel data of an image. The data layout matches the layout spe
                   left corner.
 */
 const (
-	_ = iota + 700
-	TexRes_TextureElem
+	TexRes_TextureElem = iota + 700
 	TexRes_ImageElem
 	TexRes_TexFormatI
 	TexRes_TexSliceCountI
@@ -319,8 +313,7 @@ ChanStartMaxF    - Maximum for selecting initial random value of channel
 ChanEndRateF     - Remaining percentage of initial value when particle is dying
 */
 const (
-	_ = iota + 800
-	PartEffRes_ParticleElem
+	PartEffRes_ParticleElem = iota + 800
 	PartEffRes_ChanMoveVelElem
 	PartEffRes_ChanRotVelElem
 	PartEffRes_ChanSizeElem
@@ -344,8 +337,7 @@ StageNameStr      - Name of stage [read-only]
 StageActivationI  - Flag indicating whether stage is active
 */
 const (
-	_ = iota + 900
-	PipeRes_StageElem
+	PipeRes_StageElem = iota + 900
 	PipeRes_StageNameStr
 	PipeRes_StageActivationI
 )
@@ -397,7 +389,7 @@ const (
 	                 in an 'Attachment' XML string
 */
 const (
-	NodeParams_NameStr = 1
+	NodeParams_NameStr = iota + 1
 	NodeParams_AttachmentStr
 )
 
@@ -416,8 +408,7 @@ const (
 	               (may not be smaller than LodDist3) (default: infinite)
 */
 const (
-	_             = iota + 200
-	Model_GeoResI = 200
+	Model_GeoResI = iota + 200
 	Model_SWSkinningI
 	Model_LodDist1F
 	Model_LodDist2F
@@ -437,8 +428,7 @@ const (
 	               the model's current LOD level which is calculated based on the LOD distances (default: 0)
 */
 const (
-	_ = iota + 300
-	Mesh_MatResI
+	Mesh_MatResI = iota + 300
 	Mesh_BatchStartI
 	Mesh_BatchCountI
 	Mesh_VertRStartI
@@ -470,8 +460,7 @@ const (
 	ShadowContextStr    - Name of shader context used for generating shadow map
 */
 const (
-	_ = iota + 500
-	Light_MatResI
+	Light_MatResI = iota + 500
 	Light_RadiusF
 	Light_FovF
 	Light_ColorF3
@@ -504,8 +493,7 @@ const (
 */
 
 const (
-	_ = iota + 600
-	Camera_PipeResI
+	Camera_PipeResI = iota + 600
 	Camera_OutTexResI
 	Camera_OutBufIndexI
 	Camera_LeftPlaneF
@@ -535,8 +523,7 @@ const (
 	ForceF3        - Force vector XYZ applied to particles (default: 0.0, 0.0, 0.0)
 */
 const (
-	_ = iota + 700
-	Emitter_MatResI
+	Emitter_MatResI = iota + 700
 	Emitter_PartEffResI
 	Emitter_MaxCountI
 	Emitter_RespawnCountI

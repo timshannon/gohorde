@@ -34,6 +34,7 @@ const (
 )
 
 var pipeRes horde3d.H3DRes
+var cam horde3d.H3DNode
 
 func main() {
 	var running bool = true
@@ -43,7 +44,6 @@ func main() {
 		return
 	}
 
-	//ensure glfw is cleaned up
 	defer glfw.Terminate()
 
 	if err := glfw.OpenWindow(appWidth, appHeight, 8, 8, 8, 8,
@@ -55,30 +55,25 @@ func main() {
 
 	glfw.SetSwapInterval(1)
 	glfw.SetWindowTitle(caption)
+
 	if !horde3d.Init() {
 		fmt.Println("Error starting Horde3D. Check Horde3d_log.html for details.")
 		horde3d.DumpMessages()
 		return
 	}
 
-	horde3d.SetOption(horde3d.Options_DebugViewMode, 1)
+	//horde3d.SetOption(horde3d.Options_DebugViewMode, 1)
 	// Add resources
 	//pipeline
-	pipeRes = horde3d.AddResource(horde3d.ResTypes_Pipeline, "hdr.pipeline.xml", 0)
+	pipeRes = horde3d.AddResource(horde3d.ResTypes_Pipeline, "pipelines/hdr.pipeline.xml", 0)
 
-	knightRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "knight/knight.scene.xml", 0)
+	knightRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "models/knight/knight.scene.xml", 0)
 
 	//load resources paths separated by |
-	horde3d.LoadResourcesFromDisk("../content|" +
-		"../content/pipelines|" +
-		"../content/models|" +
-		"../content/materials|" +
-		"../content/shaders|" +
-		"../content/textures|" +
-		"../content/effects")
+	horde3d.LoadResourcesFromDisk("../content")
 
 	model := horde3d.AddNodes(horde3d.RootNode, knightRes)
-	horde3d.SetNodeTransform(model, 0, 0, 300, 0, 180, 0, 0.1, 0.1, 0.1)
+	horde3d.SetNodeTransform(model, 0, 0, -30, 0, 0, 0, 0.1, 0.1, 0.1)
 
 	// Add light source
 	light := horde3d.AddLightNode(horde3d.RootNode, "Light1", 0, "LIGHTING", "SHADOWMAP")
@@ -86,14 +81,16 @@ func main() {
 	horde3d.SetNodeParamF(light, horde3d.Light_RadiusF, 0, 50)
 
 	//add camera
-	cam := horde3d.AddCameraNode(horde3d.RootNode, "Camera", pipeRes)
+	cam = horde3d.AddCameraNode(horde3d.RootNode, "Camera", pipeRes)
 	//Setup Camera Viewport
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportXI, 0)
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportYI, 0)
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportWidthI, appWidth)
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportHeightI, appHeight)
-	horde3d.SetupCameraView(cam, 45, float32(appWidth)/float32(appHeight), 0.1, 1000)
-	horde3d.ResizePipelineBuffers(pipeRes, appWidth, appHeight)
+	//horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportXI, 0)
+	//horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportYI, 0)
+	//horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportWidthI, appWidth)
+	//horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportHeightI, appHeight)
+	//horde3d.SetupCameraView(cam, 45, float32(appWidth)/float32(appHeight), 0.1, 100)
+	//horde3d.ResizePipelineBuffers(pipeRes, appWidth, appHeight)
+
+	glfw.SetWindowSizeCallback(onResize)
 
 	for running {
 
@@ -106,4 +103,19 @@ func main() {
 	}
 
 	horde3d.Release()
+}
+
+func onResize(w, h int) {
+	if h == 0 {
+		h = 1
+	}
+
+	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportXI, 0)
+	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportYI, 0)
+	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportWidthI, w)
+	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportHeightI, h)
+
+	horde3d.SetupCameraView(cam, 45.0, float32(w)/float32(h), 0.1, 1000.0)
+	horde3d.ResizePipelineBuffers(pipeRes, w, h)
+
 }
