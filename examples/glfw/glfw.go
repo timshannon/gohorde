@@ -82,14 +82,6 @@ func main() {
 
 	//add camera
 	cam = horde3d.AddCameraNode(horde3d.RootNode, "Camera", pipeRes)
-	//Setup Camera Viewport
-	//horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportXI, 0)
-	//horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportYI, 0)
-	//horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportWidthI, appWidth)
-	//horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportHeightI, appHeight)
-	//horde3d.SetupCameraView(cam, 45, float32(appWidth)/float32(appHeight), 0.1, 100)
-	//horde3d.ResizePipelineBuffers(pipeRes, appWidth, appHeight)
-
 	glfw.SetWindowSizeCallback(onResize)
 
 	for running {
