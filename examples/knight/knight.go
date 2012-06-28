@@ -22,6 +22,7 @@ package main
 
 import (
 	"code.google.com/p/gohorde/horde3d"
+	"fmt"
 	"github.com/jteeuwen/glfw"
 	"math"
 )
@@ -34,17 +35,17 @@ const (
 
 // Configuration
 var (
-	fullScreen      bool = false
-	benchmarkLength int  = 600
-	t0              float64
-	mx0, my0        int
-	running         bool
+	fullScreen bool = false
+	t0         float64
+	mx0, my0   int
+	running    bool
 
-	app Application
+	app *Application
 )
 
-func windowCloseListener() {
+func windowCloseListener() int {
 	running = false
+	return 0
 }
 
 func keyPressListener(key int, action int) {
@@ -52,14 +53,14 @@ func keyPressListener(key int, action int) {
 		return
 	}
 
-	if action == glfw.GLFW_PRESS {
+	if action == glfw.KeyPress {
 		width := appWidth
 		height := appHeight
 
 		switch key {
-		case GLFW_KEY_ESC:
+		case glfw.KeyEsc:
 			running = false
-		case GLFW_KEY_F1:
+		case glfw.KeyF1:
 			app.release()
 			glfw.CloseWindow()
 
@@ -67,10 +68,9 @@ func keyPressListener(key int, action int) {
 			fullScreen = !fullScreen
 
 			if fullScreen {
-				mode := glfw.VidMode
-				glfw.GetDesktopMode(&mode)
+				mode := glfw.DesktopMode()
 
-				aspect := float32(mode.Width) / float32(mode.Height)
+				aspect := float32(mode.W) / float32(mode.H)
 				if int(aspect*100) == 133 || int(aspect*100) == 125 { // Standard
 					width = 1280
 					height = 1024
@@ -82,8 +82,8 @@ func keyPressListener(key int, action int) {
 					height = 800
 				} else { // Unknown
 					// Use desktop resolution
-					width = mode.Width
-					height = mode.Height
+					width = mode.W
+					height = mode.H
 				}
 			}
 
@@ -94,7 +94,7 @@ func keyPressListener(key int, action int) {
 
 			app.init()
 			app.resize(width, height)
-			t0 = glfw.GetTime()
+			t0 = glfw.Time()
 		}
 	}
 }
@@ -115,18 +115,18 @@ func setupWindow(width int, height int, fullscreen bool) bool {
 	// Create OpenGL window
 	var windowType int
 	if fullScreen {
-		windowType = glfw.GLFW_FULLSCREEN
+		windowType = glfw.Fullscreen
 	} else {
-		windowType = glfw.GLFW_WINDOW
+		windowType = glfw.Windowed
 	}
 
-	if !glfw.OpenWindow(width, height, 8, 8, 8, 8, 24, 8, windowType) {
+	if err := glfw.OpenWindow(width, height, 8, 8, 8, 8, 24, 8, windowType); err != nil {
 		glfw.Terminate()
 		return false
 	}
 
 	// Disable vertical synchronization
-	glfw.SwapInterval(0)
+	glfw.SetSwapInterval(0)
 
 	// Set listeners
 	glfw.SetWindowCloseCallback(windowCloseListener)
@@ -139,32 +139,33 @@ func setupWindow(width int, height int, fullscreen bool) bool {
 func main() {
 	// Initialize GLFW
 	glfw.Init()
-	glfw.Enable(glfw.GLFW_STICKY_KEYS)
+	glfw.Enable(glfw.StickyKeys)
 	if !setupWindow(appWidth, appHeight, fullScreen) {
 		return
 	}
 
 	// Initialize application and engine
-	app := new(Application)
+	app = new(Application)
+	app.init()
 	if !fullScreen {
-		glfw.SetWindowTitle(app.getTitle())
+		glfw.SetWindowTitle(app.title)
 	}
 
 	app.resize(appWidth, appHeight)
 
-	glfw.Disable(GLFW_MOUSE_CURSOR)
+	glfw.Disable(glfw.MouseCursor)
 
-	frames := 0
-	fps := 30.0
-	t0 = glfw.GetTime()
+	var frames float32 = 0
+	var fps float32 = 30.0
+	t0 = glfw.Time()
 	running = true
 
 	// Game loop
 	for running {
 		// Calc FPS
 		frames++
-		if !benchmark && frames >= 3 {
-			t := glfw.GetTime()
+		if frames >= 3 {
+			t := glfw.Time()
 			fps = frames / float32(t-t0)
 			if fps < 5 {
 				fps = 30 // Handle breakpoints
@@ -175,7 +176,7 @@ func main() {
 
 		// Update key states
 		for i := 0; i < 320; i++ {
-			app.setKeyState(i, glfw.GetKey(i) == glfw.GLFW_PRESS)
+			app.setKeyState(i, glfw.Key(i) == glfw.KeyPress)
 		}
 		app.keyStateHandler()
 
@@ -185,7 +186,7 @@ func main() {
 
 	}
 
-	glfw.Enable(glfw.GLFW_MOUSE_CURSOR)
+	glfw.Enable(glfw.MouseCursor)
 
 	// Quit
 	app.release()
@@ -195,28 +196,40 @@ func main() {
 }
 
 // Convert from degrees to radians
-func degToRad(f float32) float32 {
-	return f * (3.1415926 / 180.0)
+func degToRad(f float32) float64 {
+	return float64(f) * (3.1415926 / 180.0)
 }
 
 type Application struct {
-	keys                          map[int]bool
-	prevKeys                      map[int]bool
+	keys                          []bool
+	prevKeys                      []bool
 	x, y, z, rx, ry, rz, velocity float32
-	fps                           int
-	animTime, weight              float32
 	contentDir                    string
 	hdrPipeRes, forwardPipeRes, fontMatRes,
 	panelMatRes, logoMatRes horde3d.H3DRes
 	cam, knight, particleSys horde3d.H3DNode
 	animTime, weight, curFps float32
+	title                    string
 }
 
 func (app *Application) init() bool {
-	app.fps = 30
-	contentDir = "../content"
+	app.title = "Horde3D Knight Sample - Go Implementation"
+	app.contentDir = "../content"
+	app.keys = make([]bool, 320)
+	app.prevKeys = make([]bool, 320)
+
+	app.x = 5
+	app.y = 3
+	app.z = 19
+	app.rx = 7
+	app.ry = 15
+	app.velocity = 10.0
+	app.curFps = 30
+
 	app.animTime = 0
 	app.weight = 1.0
+	app.cam = 0
+
 	// Initialize engine
 	if !horde3d.Init() {
 		horde3d.DumpMessages()
@@ -229,6 +242,7 @@ func (app *Application) init() bool {
 	horde3d.SetOption(horde3d.Options_FastAnimation, 0)
 	horde3d.SetOption(horde3d.Options_MaxAnisotropy, 4)
 	horde3d.SetOption(horde3d.Options_ShadowMapSize, 2048)
+	//horde3d.SetOption(horde3d.Options_WireframeMode, 1)
 
 	// Add resources
 	// Pipelines
@@ -242,6 +256,7 @@ func (app *Application) init() bool {
 	envRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "models/sphere/sphere.scene.xml", 0)
 	// Knight
 	knightRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "models/knight/knight.scene.xml", 0)
+	fmt.Println("KnightRes: ", knightRes)
 	knightAnim1Res := horde3d.AddResource(horde3d.ResTypes_Animation, "animations/knight_order.anim", 0)
 	knightAnim2Res := horde3d.AddResource(horde3d.ResTypes_Animation, "animations/knight_attack.anim", 0)
 	// Particle system
@@ -252,17 +267,16 @@ func (app *Application) init() bool {
 	// Add scene nodes
 	// Add camera
 	app.cam = horde3d.AddCameraNode(horde3d.RootNode, "Camera", app.hdrPipeRes)
-	//horde3d.SetNodeParamI( _cam, horde3d.Camera::OccCullingI, 1 );
 	// Add environment
 	env := horde3d.AddNodes(horde3d.RootNode, envRes)
 	horde3d.SetNodeTransform(env, 0, -20, 0, 0, 0, 0, 20, 20, 20)
 	// Add knight
 	app.knight = horde3d.AddNodes(horde3d.RootNode, knightRes)
-	horde3d.SetNodeTransform(app.knight, 0, 0, 0, 0, 180, 0, 0.1, 0.1, 0.1)
+	horde3d.SetNodeTransform(app.knight, 0, 0, -30, 0, 180, 0, 0.1, 0.1, 0.1)
 	horde3d.SetupModelAnimStage(app.knight, 0, knightAnim1Res, 0, "", false)
 	horde3d.SetupModelAnimStage(app.knight, 1, knightAnim2Res, 0, "", false)
 	// Attach particle system to hand joint
-	horde3d.FindNodes(_knight, "Bip01_R_Hand", horde3d.NodeTypes_Joint)
+	horde3d.FindNodes(app.knight, "Bip01_R_Hand", horde3d.NodeTypes_Joint)
 	hand := horde3d.GetNodeFindResult(0)
 	app.particleSys = horde3d.AddNodes(hand, particleSysRes)
 	horde3d.SetNodeTransform(app.particleSys, 0, 40, 0, 90, 0, 0, 1, 1, 1)
@@ -288,9 +302,10 @@ func (app *Application) init() bool {
 }
 
 func (app *Application) mainLoop(fps float32) {
-	app.curFPS = fps
+	app.curFps = fps
+	//fmt.Println(app.curFps)
 
-	app.animTime += 1.0 / app.curFPS
+	app.animTime += 1.0 / app.curFps
 
 	// Do animation blending
 	horde3d.SetModelAnimParams(app.knight, 0, app.animTime*24.0, app.weight)
@@ -299,10 +314,11 @@ func (app *Application) mainLoop(fps float32) {
 	// Animate particle systems (several emitters in a group node)
 	cnt := horde3d.FindNodes(app.particleSys, "", horde3d.NodeTypes_Emitter)
 	for i := 0; i < cnt; i++ {
-		horde3d.AdvanceEmitterTime(horde3d.GetNodeFindResult(i), 1.0/app.curFPS)
+		horde3d.AdvanceEmitterTime(horde3d.GetNodeFindResult(i), 1.0/app.curFps)
 	}
 
 	// Set camera parameters
+	//fmt.Println("postion: ", app.rx)
 	horde3d.SetNodeTransform(app.cam, app.x, app.y, app.z, app.rx, app.ry, 0, 1, 1, 1)
 
 	// Show stats
@@ -338,7 +354,7 @@ func (app *Application) resize(width int, height int) {
 	horde3d.SetNodeParamI(app.cam, horde3d.Camera_ViewportHeightI, height)
 
 	// Set virtual camera parameters
-	horde3d.SetupCameraView(app.cam, 45.0, float32(width)/height, 0.1, 1000.0)
+	horde3d.SetupCameraView(app.cam, 45.0, float32(width)/float32(height), 0.1, 1000.0)
 	horde3d.ResizePipelineBuffers(app.hdrPipeRes, width, height)
 	horde3d.ResizePipelineBuffers(app.forwardPipeRes, width, height)
 }
@@ -349,10 +365,10 @@ func (app *Application) keyStateHandler() {
 	// ----------------
 
 	if app.keys[260] && !app.prevKeys[260] { // F3
-		if horde3d.GetNodeParamI(app.cam, horde3d.Camera_PipeResI) == app.hdrPipeRes {
-			horde3d.SetNodeParamI(app.cam, horde3d.Camera_PipeResI, app.forwardPipeRes)
+		if horde3d.H3DRes(horde3d.GetNodeParamI(app.cam, horde3d.Camera_PipeResI)) == app.hdrPipeRes {
+			horde3d.SetNodeParamI(app.cam, horde3d.Camera_PipeResI, int(app.forwardPipeRes))
 		} else {
-			horde3d.SetNodeParamI(app.cam, hord3d.Camera_PipeResI, app.hdrPipeRes)
+			horde3d.SetNodeParamI(app.cam, horde3d.Camera_PipeResI, int(app.hdrPipeRes))
 		}
 	}
 
@@ -360,7 +376,7 @@ func (app *Application) keyStateHandler() {
 	// Key-down state
 	// --------------
 
-	curVel := app.velocity / app.curFPS
+	curVel := float64(app.velocity / app.curFps)
 
 	if app.keys[287] {
 		curVel *= 5 // LShift
@@ -368,36 +384,36 @@ func (app *Application) keyStateHandler() {
 
 	if app.keys['W'] {
 		// Move forward
-		app.x -= math.Sin(degToRad(app.ry)) * math.Cos(-degToRad(app.rx)) * curVel
-		app.y -= math.Sin(-degToRad(app.rx)) * curVel
-		app.z -= math.Cosf(degToRad(app.ry)) * math.Cosf(-degToRad(app.rx)) * curVel
+		app.x -= float32(math.Sin(degToRad(app.ry)) * math.Cos(-degToRad(app.rx)) * curVel)
+		app.y -= float32(math.Sin(-degToRad(app.rx)) * float64(curVel))
+		app.z -= float32(math.Cos(degToRad(app.ry)) * math.Cos(-degToRad(app.rx)) * curVel)
 	}
 	if app.keys['S'] {
 		// Move backward
-		app.x += math.Sin(degToRad(app.ry)) * math.Cos(-degToRad(app.rx)) * curVel
-		app.y += math.Sin(-degToRad(app.rx)) * curVel
-		app.z += math.Cos(degToRad(app.ry)) * math.Cos(-degToRad(app.rx)) * curVel
+		app.x += float32(math.Sin(degToRad(app.ry)) * math.Cos(-degToRad(app.rx)) * curVel)
+		app.y += float32(math.Sin(-degToRad(app.rx)) * float64(curVel))
+		app.z += float32(math.Cos(degToRad(app.ry)) * math.Cos(-degToRad(app.rx)) * curVel)
 	}
 	if app.keys['A'] {
 		// Strafe left
-		app.x += math.Sin(degToRad(app.ry-90)) * curVel
-		app.z += math.Cos(degToRad(app.ry-90)) * curVel
+		app.x += float32(math.Sin(degToRad(app.ry-90)) * curVel)
+		app.z += float32(math.Cos(degToRad(app.ry-90)) * curVel)
 	}
 	if app.keys['D'] {
 		// Strafe right
-		app.x += math.Sin(degToRad(app.ry+90)) * curVel
-		app.z += math.Cos(degToRad(app.ry+90)) * curVel
+		app.x += float32(math.Sin(degToRad(app.ry+90)) * curVel)
+		app.z += float32(math.Cos(degToRad(app.ry+90)) * curVel)
 	}
 	if app.keys['1'] {
 		// Change blend weight
-		app.weight += 2 / app.curFPS
+		app.weight += 2 / app.curFps
 		if app.weight > 1 {
 			app.weight = 1
 		}
 	}
 	if app.keys['2'] {
 		// Change blend weight
-		app.weight -= 2 / app.curFPS
+		app.weight -= 2 / app.curFps
 		if app.weight < 0 {
 			app.weight = 0
 		}
@@ -417,4 +433,9 @@ func (app *Application) mouseMoveEvent(dX float32, dY float32) {
 	if app.rx < -90 {
 		app.rx = -90
 	}
+}
+
+func (app *Application) setKeyState(key int, state bool) {
+	app.prevKeys[key] = app.keys[key]
+	app.keys[key] = state
 }
