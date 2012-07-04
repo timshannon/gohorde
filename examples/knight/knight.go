@@ -146,7 +146,9 @@ func main() {
 
 	// Initialize application and engine
 	app = new(Application)
-	app.init()
+	if !app.init() {
+		fmt.Println("Error starting Horde3d")
+	}
 	if !fullScreen {
 		glfw.SetWindowTitle(app.title)
 	}
@@ -242,7 +244,7 @@ func (app *Application) init() bool {
 	horde3d.SetOption(horde3d.Options_FastAnimation, 0)
 	horde3d.SetOption(horde3d.Options_MaxAnisotropy, 4)
 	horde3d.SetOption(horde3d.Options_ShadowMapSize, 2048)
-	//horde3d.SetOption(horde3d.Options_WireframeMode, 1)
+	//horde3d.SetOption(horde3d.Options_DebugViewMode, 1)
 
 	// Add resources
 	// Pipelines
@@ -256,23 +258,24 @@ func (app *Application) init() bool {
 	envRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "models/sphere/sphere.scene.xml", 0)
 	// Knight
 	knightRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "models/knight/knight.scene.xml", 0)
-	fmt.Println("KnightRes: ", knightRes)
 	knightAnim1Res := horde3d.AddResource(horde3d.ResTypes_Animation, "animations/knight_order.anim", 0)
 	knightAnim2Res := horde3d.AddResource(horde3d.ResTypes_Animation, "animations/knight_attack.anim", 0)
 	// Particle system
-	particleSysRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph, "particles/particleSys1/particleSys1.scene.xml", 0)
+	particleSysRes := horde3d.AddResource(horde3d.ResTypes_SceneGraph,
+		"particles/particleSys1/particleSys1.scene.xml", 0)
 	// Load resources
 	horde3d.LoadResourcesFromDisk(app.contentDir)
 
 	// Add scene nodes
 	// Add camera
 	app.cam = horde3d.AddCameraNode(horde3d.RootNode, "Camera", app.hdrPipeRes)
+	horde3d.SetNodeParamI(app.cam, horde3d.Camera_OccCullingI, 0)
 	// Add environment
 	env := horde3d.AddNodes(horde3d.RootNode, envRes)
 	horde3d.SetNodeTransform(env, 0, -20, 0, 0, 0, 0, 20, 20, 20)
 	// Add knight
 	app.knight = horde3d.AddNodes(horde3d.RootNode, knightRes)
-	horde3d.SetNodeTransform(app.knight, 0, 0, -30, 0, 180, 0, 0.1, 0.1, 0.1)
+	horde3d.SetNodeTransform(app.knight, 0, 0, 0, 0, 180, 0, 0.1, 0.1, 0.1)
 	horde3d.SetupModelAnimStage(app.knight, 0, knightAnim1Res, 0, "", false)
 	horde3d.SetupModelAnimStage(app.knight, 1, knightAnim2Res, 0, "", false)
 	// Attach particle system to hand joint
@@ -318,7 +321,6 @@ func (app *Application) mainLoop(fps float32) {
 	}
 
 	// Set camera parameters
-	//fmt.Println("postion: ", app.rx)
 	horde3d.SetNodeTransform(app.cam, app.x, app.y, app.z, app.rx, app.ry, 0, 1, 1, 1)
 
 	// Show stats
@@ -426,7 +428,7 @@ func (app *Application) mouseMoveEvent(dX float32, dY float32) {
 	app.ry -= dX / 100 * 30
 
 	// Loop up/down but only in a limited range
-	app.rx += dY / 100 * 30
+	app.rx -= dY / 100 * 30
 	if app.rx > 90 {
 		app.rx = 90
 	}

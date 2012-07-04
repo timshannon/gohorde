@@ -540,8 +540,8 @@ var Bool = map[int]bool{
 	1: true,
 }
 var Int = map[bool]C.int{
-	false: C.int(1),
-	true:  C.int(0),
+	false: C.int(0),
+	true:  C.int(1),
 }
 
 func GetVersionString() string {
