@@ -148,6 +148,7 @@ func main() {
 	app = new(Application)
 	if !app.init() {
 		fmt.Println("Error starting Horde3d")
+		horde3d.DumpMessages()
 	}
 	if !fullScreen {
 		glfw.SetWindowTitle(app.title)
@@ -340,7 +341,7 @@ func (app *Application) mainLoop(fps float32) {
 	horde3d.ClearOverlays()
 
 	// Write all messages to log file
-	horde3d.DumpMessages()
+	//horde3d.DumpMessages()
 }
 
 func (app *Application) release() {

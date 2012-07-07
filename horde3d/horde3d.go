@@ -663,8 +663,8 @@ func IsResLoaded(res H3DRes) bool {
 	return Bool[int(C.h3dIsResLoaded(C.H3DRes(res)))]
 }
 
-func LoadResource(res H3DRes, data []byte, size int) bool {
-	return Bool[int(C.h3dLoadResource(C.H3DRes(res), (*C.char)(unsafe.Pointer(&data[0])), C.int(size)))]
+func LoadResource(res H3DRes, data []byte) bool {
+	return Bool[int(C.h3dLoadResource(C.H3DRes(res), (*C.char)(unsafe.Pointer(&data[0])), C.int(len(data))))]
 }
 
 func UnloadResource(res H3DRes) {
