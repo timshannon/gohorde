@@ -789,8 +789,8 @@ func SetNodeParent(node H3DNode, parent H3DNode) bool {
 	return Bool[int(C.h3dSetNodeParent(C.H3DNode(node), C.H3DNode(parent)))]
 }
 
-func GetNodeChild(node H3DNode, index int) bool {
-	return Bool[int(C.h3dGetNodeChild(C.H3DNode(node), C.int(index)))]
+func GetNodeChild(node H3DNode, index int) H3DNode {
+	return H3DNode(C.h3dGetNodeChild(C.H3DNode(node), C.int(index)))
 }
 
 func AddNodes(parent H3DNode, sceneGraphRes H3DRes) H3DNode {
