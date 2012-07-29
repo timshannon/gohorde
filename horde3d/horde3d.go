@@ -21,7 +21,9 @@
 package horde3d
 
 /*
-#cgo LDFLAGS: -lHorde3D
+#cgo darwin LDFLAGS: -framework Horde3D
+#cgo windows LDFLAGS: -lHorde3D
+#cgo linux  LDFLAGS: -lHorde3D
 #include "goHorde3D.h"
 #include <stdlib.h>
 */
@@ -66,7 +68,7 @@ const (
 	_ = iota
 	Options_MaxLogLevel
 	Options_MaxNumMessages
-	ptions_TrilinearFiltering
+	Options_TrilinearFiltering
 	Options_MaxAnisotropy
 	Options_TexCompression
 	Options_SRGBLinearization
