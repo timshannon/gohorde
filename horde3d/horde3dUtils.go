@@ -21,7 +21,9 @@
 package horde3d
 
 /*
-#cgo LDFLAGS: -lHorde3DUtils
+#cgo darwin LDFLAGS: -framework Horde3DUtils
+#cgo windows LDFLAGS: -lHorde3DUtils
+#cgo linux  LDFLAGS: -lHorde3DUtils
 #include "goHorde3DUtils.h"
 #include <stdlib.h>
 */
