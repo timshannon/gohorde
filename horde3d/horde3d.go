@@ -586,7 +586,7 @@ func Clear() {
 func GetMessage(level *int, time *float32) string {
 	message := C.h3dGetMessage((*C.int)(unsafe.Pointer(level)),
 		(*C.float)(unsafe.Pointer(time)))
-	defer C.free(unsafe.Pointer(message))
+	//defer C.free(unsafe.Pointer(message))
 	return C.GoString(message)
 }
 
@@ -704,7 +704,7 @@ func SetResParamF(res H3DRes, elem int, elemIdx int, param int, compIdx int, val
 
 func GetResParamStr(res H3DRes, elem int, elemIdx int, param int) string {
 	value := C.h3dGetResParamStr(C.H3DRes(res), C.int(elem), C.int(elemIdx), C.int(param))
-	defer C.free(unsafe.Pointer(value))
+	//defer C.free(unsafe.Pointer(value))
 	return C.GoString(value)
 }
 
@@ -850,7 +850,7 @@ func SetNodeParamF(node H3DNode, param int, compIdx int, value float32) {
 
 func GetNodeParamStr(node H3DNode, param int) string {
 	value := C.h3dGetNodeParamStr(C.H3DNode(node), C.int(param))
-	defer C.free(unsafe.Pointer(value))
+	//defer C.free(unsafe.Pointer(value))
 	return C.GoString(value)
 }
 
