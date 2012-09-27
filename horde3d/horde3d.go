@@ -822,10 +822,19 @@ func SetNodeTransform(node H3DNode, tx float32, ty float32, tz float32,
 }
 
 func GetNodeTransMats(node H3DNode, relMat []float32, absMat []float32) {
-	//TODO: Handle nil pointers, possibly check for nil
+	var rel unsafe.Pointer
+	var abs unsafe.Pointer
+	//TODO: Fix, need to copy out matrix values
 
-	C.h3dGetNodeTransMats(C.H3DNode(node), (**C.float)(unsafe.Pointer(&relMat[0])),
-		(**C.float)(unsafe.Pointer(&absMat[0])))
+	if relMat != nil {
+		rel = unsafe.Pointer(&relMat[0])
+	}
+	if absMat != nil {
+		abs = unsafe.Pointer(&absMat[0])
+	}
+
+	C.h3dGetNodeTransMats(C.H3DNode(node), (**C.float)(rel),
+		(**C.float)(abs))
 }
 
 func SetNodeTransMat(node H3DNode, mat4x4 []float32) {
