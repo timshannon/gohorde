@@ -26,6 +26,12 @@ package horde3d
 #cgo linux  LDFLAGS: -lHorde3D
 #include "goHorde3D.h"
 #include <stdlib.h>
+
+void CopyFloatArray(float* src, float* dest, int len) {
+	int i;
+	for(i=0; i < len; i++)
+		*(dest+i) = *(src+i);
+}
 */
 import "C"
 import "unsafe"
@@ -822,19 +828,24 @@ func SetNodeTransform(node H3DNode, tx float32, ty float32, tz float32,
 }
 
 func GetNodeTransMats(node H3DNode, relMat []float32, absMat []float32) {
-	var rel unsafe.Pointer
-	var abs unsafe.Pointer
-	//TODO: Fix, need to copy out matrix values
+	var rel **C.float
+	var abs **C.float
+
+	if relMat == nil {
+		rel = nil
+	}
+	if absMat == nil {
+		abs = nil
+	}
+
+	C.h3dGetNodeTransMats(C.H3DNode(node), rel, abs)
 
 	if relMat != nil {
-		rel = unsafe.Pointer(&relMat[0])
+		C.CopyFloatArray(*rel, (*C.float)(&relMat[0]), 16)
 	}
 	if absMat != nil {
-		abs = unsafe.Pointer(&absMat[0])
+		C.CopyFloatArray(*abs, (*C.float)(&absMat[0]), 16)
 	}
-
-	C.h3dGetNodeTransMats(C.H3DNode(node), (**C.float)(rel),
-		(**C.float)(abs))
 }
 
 func SetNodeTransMat(node H3DNode, mat4x4 []float32) {
