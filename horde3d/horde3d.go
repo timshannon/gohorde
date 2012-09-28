@@ -831,11 +831,11 @@ func GetNodeTransMats(node H3DNode, relMat []float32, absMat []float32) {
 	var rel **C.float
 	var abs **C.float
 
-	if relMat == nil {
-		rel = nil
+	if relMat != nil {
+		rel = (**C.float)(unsafe.Pointer(&relMat[0]))
 	}
-	if absMat == nil {
-		abs = nil
+	if absMat != nil {
+		abs = (**C.float)(unsafe.Pointer(&absMat[0]))
 	}
 
 	C.h3dGetNodeTransMats(C.H3DNode(node), rel, abs)
