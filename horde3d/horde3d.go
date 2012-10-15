@@ -30,7 +30,7 @@ package horde3d
 void CopyFloatArray(float* src, float* dest, int len) {
 	int i;
 	for(i=0; i < len; i++)
-		*(dest+i) = *(src+i);
+		dest[i] = src[i];
 }
 */
 import "C"
