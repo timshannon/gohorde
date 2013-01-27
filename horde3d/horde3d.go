@@ -725,7 +725,7 @@ func MapResStream(res H3DRes, elem int, elemIdx int, stream int, read bool, writ
 	cStream := C.h3dMapResStream(C.H3DRes(res), C.int(elem), C.int(elemIdx), C.int(stream),
 		Int[read], Int[write])
 
-	C.free(cStream)
+	defer C.free(cStream)
 
 	return C.GoBytes(unsafe.Pointer(cStream), C.int(size))
 }
