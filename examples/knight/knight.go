@@ -330,7 +330,7 @@ func (app *Application) mainLoop(fps float32) {
 		float32(horde3d.GetNodeParamI(app.cam, horde3d.Camera_ViewportHeightI))
 	ovLogo := []float32{ww - 0.4, 0.8, 0, 1, ww - 0.4, 1, 0, 0, ww, 1, 1, 0, ww, 0.8, 1, 1}
 	horde3d.ShowOverlays(ovLogo, 4, 1.0, 1.0, 1.0, 1.0, app.logoMatRes, 0)
-
+	horde3d.ShowText("test", 0.03, 0.24, 0.026, 1, 1, 1, app.fontMatRes)
 	// Render scene
 	horde3d.Render(app.cam)
 
