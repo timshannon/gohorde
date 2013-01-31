@@ -34,7 +34,11 @@ void CopyFloatArray(float* src, float* dest, int len) {
 }
 */
 import "C"
-import "unsafe"
+import (
+	"errors"
+	"reflect"
+	"unsafe"
+)
 
 //typedef int H3DRes;
 //typedef int H3DNode;
@@ -720,14 +724,69 @@ func SetResParamStr(res H3DRes, elem int, elemIdx int, param int, value string) 
 	C.h3dSetResParamStr(C.H3DRes(res), C.int(elem), C.int(elemIdx), C.int(param), cValue)
 }
 
-func MapResStream(res H3DRes, elem int, elemIdx int, stream int, read bool, write bool, size int) []byte {
+//MapResStream will return an unsafe pointer to the internal C array in Horde.  Think about using
+// other safer typed stream options instead
+func MapResStream(res H3DRes, elem int, elemIdx int, stream int, read bool, write bool) unsafe.Pointer {
 
-	cStream := C.h3dMapResStream(C.H3DRes(res), C.int(elem), C.int(elemIdx), C.int(stream),
+	return C.h3dMapResStream(C.H3DRes(res), C.int(elem), C.int(elemIdx), C.int(stream),
 		Int[read], Int[write])
 
-	defer C.free(cStream)
+}
 
-	return C.GoBytes(unsafe.Pointer(cStream), C.int(size))
+func prepSlice(slicePtr unsafe.Pointer, cArrayPtr unsafe.Pointer, length int) {
+	slcHead := (*reflect.SliceHeader)(slicePtr)
+	slcHead.Cap = length
+	slcHead.Len = length
+	slcHead.Data = uintptr(cArrayPtr)
+}
+
+func MapUint16ResStream(res H3DRes, elem int, elemIdx int, stream int, read bool, write bool, length int) ([]uint16, error) {
+	ptr := MapResStream(res, elem, elemIdx, stream, read, write)
+
+	if ptr == nil {
+		return nil, errors.New("Stream could not be mapped")
+	}
+
+	var slice []uint16
+	prepSlice(unsafe.Pointer(&slice), ptr, length)
+
+	return slice, nil
+}
+
+func MapUint32ResStream(res H3DRes, elem int, elemIdx int, stream int, read bool, write bool, length int) ([]uint32, error) {
+	ptr := MapResStream(res, elem, elemIdx, stream, read, write)
+
+	if ptr == nil {
+		return nil, errors.New("Stream could not be mapped")
+	}
+	var slice []uint32
+	prepSlice(unsafe.Pointer(&slice), ptr, length)
+
+	return slice, nil
+}
+
+func MapFloatResStream(res H3DRes, elem int, elemIdx int, stream int, read bool, write bool, length int) ([]float32, error) {
+	ptr := MapResStream(res, elem, elemIdx, stream, read, write)
+
+	if ptr == nil {
+		return nil, errors.New("Stream could not be mapped")
+	}
+	var slice []float32
+	prepSlice(unsafe.Pointer(&slice), ptr, length)
+
+	return slice, nil
+}
+
+func MapByteResStream(res H3DRes, elem int, elemIdx int, stream int, read bool, write bool, length int) ([]byte, error) {
+	ptr := MapResStream(res, elem, elemIdx, stream, read, write)
+
+	if ptr == nil {
+		return nil, errors.New("Stream could not be mapped")
+	}
+	var slice []byte
+	prepSlice(unsafe.Pointer(&slice), ptr, length)
+
+	return slice, nil
 }
 
 func UnmapResStream(res H3DRes) {
