@@ -58,7 +58,7 @@ func LoadResourcesFromDisk(contentDir string) bool {
 }
 
 func CreateGeometryRes(name string, numVertices int, numTriangleIndices int, posData []float32,
-	indexData []uint, normalData []int16, tangentData []int16, bitangentData []int16,
+	indexData []uint32, normalData []int16, tangentData []int16, bitangentData []int16,
 	textData1 []float32, textData2 []float32) H3DRes {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
