@@ -63,11 +63,30 @@ func CreateGeometryRes(name string, numVertices int, numTriangleIndices int, pos
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 
+	var normal, tangent, bitangent *C.short
+	var text1, text2 *C.float
+
+	if normalData != nil {
+		normal = (*C.short)(unsafe.Pointer(&normalData[0]))
+	}
+	if tangentData != nil {
+		tangent = (*C.short)(unsafe.Pointer(&tangentData[0]))
+	}
+	if bitangentData != nil {
+		bitangent = (*C.short)(unsafe.Pointer(&bitangentData[0]))
+	}
+
+	if textData1 != nil {
+		text1 = (*C.float)(unsafe.Pointer(&textData1[0]))
+	}
+
+	if textData2 != nil {
+		text2 = (*C.float)(unsafe.Pointer(&textData2[0]))
+	}
+
 	return H3DRes(C.h3dutCreateGeometryRes(cName, C.int(numVertices), C.int(numTriangleIndices),
 		(*C.float)(unsafe.Pointer(&posData[0])), (*C.uint)(unsafe.Pointer(&indexData[0])),
-		(*C.short)(unsafe.Pointer(&normalData[0])), (*C.short)(unsafe.Pointer(&tangentData[0])),
-		(*C.short)(unsafe.Pointer(&bitangentData[0])), (*C.float)(unsafe.Pointer(&textData1[0])),
-		(*C.float)(unsafe.Pointer(&textData2[0]))))
+		normal, tangent, bitangent, text1, text2))
 
 }
 
