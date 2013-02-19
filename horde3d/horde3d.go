@@ -26,12 +26,6 @@ package horde3d
 #cgo linux  LDFLAGS: -lHorde3D
 #include "goHorde3D.h"
 #include <stdlib.h>
-
-void CopyFloatArray(float* src, float* dest, int len) {
-	int i;
-	for(i=0; i < len; i++)
-		dest[i] = src[i];
-}
 */
 import "C"
 import (
@@ -220,7 +214,7 @@ const (
 )
 
 /* Enum: AnimRes
-	The available Animation resource accessors.	  
+	The available Animation resource accessors.
 
 EntityElem      - Stored animation entities (joints and meshes)
 EntFrameCountI  - Number of frames stored for a specific entity [read-only]
@@ -260,7 +254,7 @@ const (
 /* Enum: ShaderRes
 	The available Shader resource accessors.
 
-ContextElem     - Context element 
+ContextElem     - Context element
 SamplerElem     - Sampler element
 UniformElem     - Uniform element
 ContNameStr     - Name of context [read-only]
@@ -830,18 +824,13 @@ func ResizePipelineBuffers(pipeRes H3DRes, width int, height int) {
 }
 
 func GetRenderTargetData(pipelineRes H3DRes, targetName string, bufIndex int, width *int,
-	height *int, compCount *int, dataBuffer []byte, bufferSize int) bool {
+	height *int, compCount *int, dataBuffer []byte) bool {
 	cTargetName := C.CString(targetName)
 	defer C.free(unsafe.Pointer(cTargetName))
 
-	var cDataBuffer unsafe.Pointer
-	defer C.free(cDataBuffer)
-	var targetFound bool
-	targetFound = Bool[int(C.h3dGetRenderTargetData(C.H3DRes(pipelineRes), cTargetName,
+	return Bool[int(C.h3dGetRenderTargetData(C.H3DRes(pipelineRes), cTargetName,
 		C.int(bufIndex), (*C.int)(unsafe.Pointer(width)), (*C.int)(unsafe.Pointer(height)),
-		(*C.int)(unsafe.Pointer(compCount)), cDataBuffer, C.int(bufferSize)))]
-	dataBuffer = C.GoBytes(cDataBuffer, C.int(bufferSize))
-	return targetFound
+		(*C.int)(unsafe.Pointer(compCount)), unsafe.Pointer(&dataBuffer[0]), C.int(len(dataBuffer))))]
 }
 
 func GetNodeType(node H3DNode) int {
@@ -886,7 +875,7 @@ func SetNodeTransform(node H3DNode, tx float32, ty float32, tz float32,
 		C.float(rx), C.float(ry), C.float(rz), C.float(sx), C.float(sy), C.float(sz))
 }
 
-func GetNodeTransMats(node H3DNode, relMat []float32, absMat []float32) {
+func GetNodeTransMats(node H3DNode, relMat *[16]float32, absMat *[16]float32) {
 	var rel **C.float
 	var abs **C.float
 
@@ -900,14 +889,17 @@ func GetNodeTransMats(node H3DNode, relMat []float32, absMat []float32) {
 	C.h3dGetNodeTransMats(C.H3DNode(node), rel, abs)
 
 	if relMat != nil {
-		C.CopyFloatArray(*rel, (*C.float)(&relMat[0]), 16)
+		//C.CopyFloatArray(*rel, (*C.float)(&relMat[0]), 16)
+		prepSlice(unsafe.Pointer(&relMat), unsafe.Pointer(*rel), 16)
+
 	}
 	if absMat != nil {
-		C.CopyFloatArray(*abs, (*C.float)(&absMat[0]), 16)
+		//C.CopyFloatArray(*abs, (*C.float)(&absMat[0]), 16)
+		prepSlice(unsafe.Pointer(&absMat), unsafe.Pointer(*abs), 16)
 	}
 }
 
-func SetNodeTransMat(node H3DNode, mat4x4 []float32) {
+func SetNodeTransMat(node H3DNode, mat4x4 *[16]float32) {
 	C.h3dSetNodeTransMat(C.H3DNode(node), (*C.float)(unsafe.Pointer(&mat4x4[0])))
 }
 
@@ -971,7 +963,7 @@ func CastRay(node H3DNode, ox float32, oy float32, oz float32,
 		C.float(dx), C.float(dy), C.float(dz), C.int(numNearest)))
 }
 
-func GetCastRayResult(index int, node *H3DNode, distance *float32, intersection []float32) bool {
+func GetCastRayResult(index int, node *H3DNode, distance *float32, intersection *[3]float32) bool {
 	return Bool[int(C.h3dGetCastRayResult(C.int(index), (*C.H3DNode)(unsafe.Pointer(node)),
 		(*C.float)(unsafe.Pointer(distance)), (*C.float)(unsafe.Pointer(&intersection[0]))))]
 }
@@ -1051,7 +1043,7 @@ func SetupCameraView(cameraNode H3DNode, fov float32, aspect float32,
 		C.float(nearDist), C.float(farDist))
 }
 
-func GetCameraProjMat(cameraNode H3DNode, projMat []float32) {
+func GetCameraProjMat(cameraNode H3DNode, projMat *[16]float32) {
 
 	C.h3dGetCameraProjMat(C.H3DNode(cameraNode), (*C.float)(unsafe.Pointer(&projMat[0])))
 }
