@@ -26,6 +26,11 @@ package horde3d
 #cgo linux  LDFLAGS: -lHorde3D
 #include "goHorde3D.h"
 #include <stdlib.h>
+void CopyFloatArray(float* src, float* dest, int len) {
+        int i;
+        for(i=0; i < len; i++)
+                dest[i] = src[i];
+}
 */
 import "C"
 import (
@@ -889,13 +894,13 @@ func GetNodeTransMats(node H3DNode, relMat *[16]float32, absMat *[16]float32) {
 	C.h3dGetNodeTransMats(C.H3DNode(node), rel, abs)
 
 	if relMat != nil {
-		//C.CopyFloatArray(*rel, (*C.float)(&relMat[0]), 16)
-		prepSlice(unsafe.Pointer(&relMat), unsafe.Pointer(*rel), 16)
+		C.CopyFloatArray(*rel, (*C.float)(&relMat[0]), 16)
+		//prepSlice(unsafe.Pointer(&relMat), unsafe.Pointer(*rel), 16)
 
 	}
 	if absMat != nil {
-		//C.CopyFloatArray(*abs, (*C.float)(&absMat[0]), 16)
-		prepSlice(unsafe.Pointer(&absMat), unsafe.Pointer(*abs), 16)
+		C.CopyFloatArray(*abs, (*C.float)(&absMat[0]), 16)
+		//prepSlice(unsafe.Pointer(&absMat), unsafe.Pointer(*abs), 16)
 	}
 }
 
