@@ -50,7 +50,7 @@ func main() {
 	horde3d.Init()
 	//horde3d.SetOption(horde3d.Options_DebugViewMode, 1)
 	//horde3d.SetOption(horde3d.Options_WireframeMode, 1)
-	fmt.Println("Version: ", horde3d.GetVersionString())
+	fmt.Println("Version: ", horde3d.VersionString())
 
 	//pipeline
 	pipeRes := horde3d.AddResource(horde3d.ResTypes_Pipeline, "forward.pipeline.xml", 0)
@@ -68,27 +68,27 @@ func main() {
 		"../content/effects")
 
 	//add camera
-	cam := horde3d.AddCameraNode(horde3d.RootNode, "Camera", pipeRes)
+	cam := horde3d.RootNode.AddCameraNode("Camera", pipeRes)
 	//Setup Camera Viewport
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportXI, 0)
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportYI, 0)
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportWidthI, width)
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportHeightI, height)
+	cam.SetNodeParamI(horde3d.Camera_ViewportXI, 0)
+	cam.SetNodeParamI(horde3d.Camera_ViewportYI, 0)
+	cam.SetNodeParamI(horde3d.Camera_ViewportWidthI, width)
+	cam.SetNodeParamI(horde3d.Camera_ViewportHeightI, height)
 
 	//add model
-	model := horde3d.AddNodes(horde3d.RootNode, modelRes)
-	horde3d.SetNodeTransform(model, 0, -30, -150, 0, 0, 0, 1, 1, 1)
+	model := horde3d.RootNode.AddNodes(modelRes)
+	model.SetTransform(0, -30, -150, 0, 0, 0, 1, 1, 1)
 	//add light
-	light := horde3d.AddLightNode(horde3d.RootNode, "Light1", 0, "LIGHTING", "SHADOWMAP")
-	horde3d.SetNodeTransform(light, 0, 20, 0, 0, 0, 0, 1, 1, 1)
-	horde3d.SetNodeParamF(light, horde3d.Light_RadiusF, 0, 150)
-	horde3d.SetNodeParamF(light, horde3d.Light_FovF, 0, 90)
+	light := horde3d.RootNode.AddLightNode("Light1", 0, "LIGHTING", "SHADOWMAP")
+	light.SetTransform(0, 20, 0, 0, 0, 0, 1, 1, 1)
+	light.SetNodeParamF(horde3d.Light_RadiusF, 0, 150)
+	light.SetNodeParamF(horde3d.Light_FovF, 0, 90)
 	//horde3d.SetNodeParamI(light, horde3d.Light_ShadowMapCountI, 3)
-	horde3d.SetNodeParamF(light, horde3d.Light_ShadowSplitLambdaF, 0, 0.9)
+	light.SetNodeParamF(horde3d.Light_ShadowSplitLambdaF, 0, 0.9)
 	//horde3d.SetNodeParamF(light, horde3d.Light_ShadowMapBiasF, 0, 0.001)
-	horde3d.SetNodeParamF(light, horde3d.Light_ColorF3, 0, 1.9)
-	horde3d.SetNodeParamF(light, horde3d.Light_ColorF3, 1, 1.7)
-	horde3d.SetNodeParamF(light, horde3d.Light_ColorF3, 2, 1.75)
+	light.SetNodeParamF(horde3d.Light_ColorF3, 0, 1.9)
+	light.SetNodeParamF(horde3d.Light_ColorF3, 1, 1.7)
+	light.SetNodeParamF(horde3d.Light_ColorF3, 2, 1.75)
 
 	for running {
 		t = 0
