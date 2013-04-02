@@ -72,16 +72,16 @@ func main() {
 	//load resources paths separated by |
 	horde3d.LoadResourcesFromDisk("../content")
 
-	model := horde3d.AddNodes(horde3d.RootNode, knightRes)
-	horde3d.SetNodeTransform(model, 0, 0, -30, 0, 0, 0, 0.1, 0.1, 0.1)
+	model := horde3d.RootNode.AddNodes(knightRes)
+	model.SetTransform(0, 0, -30, 0, 0, 0, 0.1, 0.1, 0.1)
 
 	// Add light source
-	light := horde3d.AddLightNode(horde3d.RootNode, "Light1", 0, "LIGHTING", "SHADOWMAP")
-	horde3d.SetNodeTransform(light, 0, 20, 0, 0, 0, 0, 1, 1, 1)
-	horde3d.SetNodeParamF(light, horde3d.Light_RadiusF, 0, 50)
+	light := horde3d.RootNode.AddLightNode("Light1", 0, "LIGHTING", "SHADOWMAP")
+	light.SetTransform(0, 20, 0, 0, 0, 0, 1, 1, 1)
+	light.SetNodeParamF(horde3d.Light_RadiusF, 0, 50)
 
 	//add camera
-	cam = horde3d.AddCameraNode(horde3d.RootNode, "Camera", pipeRes)
+	cam = horde3d.RootNode.AddCameraNode("Camera", pipeRes)
 	glfw.SetWindowSizeCallback(onResize)
 
 	for running {
@@ -102,10 +102,10 @@ func onResize(w, h int) {
 		h = 1
 	}
 
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportXI, 0)
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportYI, 0)
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportWidthI, w)
-	horde3d.SetNodeParamI(cam, horde3d.Camera_ViewportHeightI, h)
+	cam.SetNodeParamI(horde3d.Camera_ViewportXI, 0)
+	cam.SetNodeParamI(horde3d.Camera_ViewportYI, 0)
+	cam.SetNodeParamI(horde3d.Camera_ViewportWidthI, w)
+	cam.SetNodeParamI(horde3d.Camera_ViewportHeightI, h)
 
 	horde3d.SetupCameraView(cam, 45.0, float32(w)/float32(h), 0.1, 1000.0)
 	horde3d.ResizePipelineBuffers(pipeRes, w, h)
