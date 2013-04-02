@@ -269,33 +269,33 @@ func (app *Application) init() bool {
 
 	// Add scene nodes
 	// Add camera
-	app.cam = horde3d.AddCameraNode(horde3d.RootNode, "Camera", app.hdrPipeRes)
-	horde3d.SetNodeParamI(app.cam, horde3d.Camera_OccCullingI, 0)
+	app.cam = horde3d.RootNode.AddCameraNode("Camera", app.hdrPipeRes)
+	app.cam.SetNodeParamI(horde3d.Camera_OccCullingI, 0)
 	// Add environment
-	env := horde3d.AddNodes(horde3d.RootNode, envRes)
-	horde3d.SetNodeTransform(env, 0, -20, 0, 0, 0, 0, 20, 20, 20)
+	env := horde3d.RootNode.AddNodes(envRes)
+	env.SetTransform(0, -20, 0, 0, 0, 0, 20, 20, 20)
 	// Add knight
-	app.knight = horde3d.AddNodes(horde3d.RootNode, knightRes)
-	horde3d.SetNodeTransform(app.knight, 0, 0, 0, 0, 180, 0, 0.1, 0.1, 0.1)
+	app.knight = horde3d.RootNode.AddNodes(knightRes)
+	app.knight.SetTransform(0, 0, 0, 0, 180, 0, 0.1, 0.1, 0.1)
 	horde3d.SetupModelAnimStage(app.knight, 0, knightAnim1Res, 0, "", false)
 	horde3d.SetupModelAnimStage(app.knight, 1, knightAnim2Res, 0, "", false)
 	// Attach particle system to hand joint
 	horde3d.FindNodes(app.knight, "Bip01_R_Hand", horde3d.NodeTypes_Joint)
 	hand := horde3d.GetNodeFindResult(0)
-	app.particleSys = horde3d.AddNodes(hand, particleSysRes)
-	horde3d.SetNodeTransform(app.particleSys, 0, 40, 0, 90, 0, 0, 1, 1, 1)
+	app.particleSys = hand.AddNodes(particleSysRes)
+	app.particleSys.SetTransform(0, 40, 0, 90, 0, 0, 1, 1, 1)
 
 	// Add light source
-	light := horde3d.AddLightNode(horde3d.RootNode, "Light1", 0, "LIGHTING", "SHADOWMAP")
-	horde3d.SetNodeTransform(light, 0, 15, 10, -60, 0, 0, 1, 1, 1)
-	horde3d.SetNodeParamF(light, horde3d.Light_RadiusF, 0, 30)
-	horde3d.SetNodeParamF(light, horde3d.Light_FovF, 0, 90)
-	horde3d.SetNodeParamI(light, horde3d.Light_ShadowMapCountI, 1)
-	horde3d.SetNodeParamF(light, horde3d.Light_ShadowMapBiasF, 0, 0.01)
-	horde3d.SetNodeParamF(light, horde3d.Light_ColorF3, 0, 1.0)
-	horde3d.SetNodeParamF(light, horde3d.Light_ColorF3, 1, 0.8)
-	horde3d.SetNodeParamF(light, horde3d.Light_ColorF3, 2, 0.7)
-	horde3d.SetNodeParamF(light, horde3d.Light_ColorMultiplierF, 0, 1.0)
+	light := horde3d.RootNode.AddLightNode("Light1", 0, "LIGHTING", "SHADOWMAP")
+	light.SetTransform(0, 15, 10, -60, 0, 0, 1, 1, 1)
+	light.SetNodeParamF(horde3d.Light_RadiusF, 0, 30)
+	light.SetNodeParamF(horde3d.Light_FovF, 0, 90)
+	light.SetNodeParamI(horde3d.Light_ShadowMapCountI, 1)
+	light.SetNodeParamF(horde3d.Light_ShadowMapBiasF, 0, 0.01)
+	light.SetNodeParamF(horde3d.Light_ColorF3, 0, 1.0)
+	light.SetNodeParamF(horde3d.Light_ColorF3, 1, 0.8)
+	light.SetNodeParamF(horde3d.Light_ColorF3, 2, 0.7)
+	light.SetNodeParamF(horde3d.Light_ColorMultiplierF, 0, 1.0)
 
 	// Customize post processing effects
 	matRes := horde3d.FindResource(horde3d.ResTypes_Material, "pipelines/postHDR.material.xml")
@@ -322,12 +322,12 @@ func (app *Application) mainLoop(fps float32) {
 	}
 
 	// Set camera parameters
-	horde3d.SetNodeTransform(app.cam, app.x, app.y, app.z, app.rx, app.ry, 0, 1, 1, 1)
+	app.cam.SetTransform(app.x, app.y, app.z, app.rx, app.ry, 0, 1, 1, 1)
 
 	// Show stats
 	// Show logo
-	ww := float32(horde3d.GetNodeParamI(app.cam, horde3d.Camera_ViewportWidthI)) /
-		float32(horde3d.GetNodeParamI(app.cam, horde3d.Camera_ViewportHeightI))
+	ww := float32(app.cam.NodeParamI(horde3d.Camera_ViewportWidthI)) /
+		float32(app.cam.NodeParamI(horde3d.Camera_ViewportHeightI))
 	ovLogo := []float32{ww - 0.4, 0.8, 0, 1, ww - 0.4, 1, 0, 0, ww, 1, 1, 0, ww, 0.8, 1, 1}
 	horde3d.ShowOverlays(ovLogo, 4, 1.0, 1.0, 1.0, 1.0, app.logoMatRes, 0)
 	horde3d.ShowText("test", 0.03, 0.24, 0.026, 1, 1, 1, app.fontMatRes)
@@ -351,10 +351,10 @@ func (app *Application) release() {
 
 func (app *Application) resize(width int, height int) {
 	// Resize viewport
-	horde3d.SetNodeParamI(app.cam, horde3d.Camera_ViewportXI, 0)
-	horde3d.SetNodeParamI(app.cam, horde3d.Camera_ViewportYI, 0)
-	horde3d.SetNodeParamI(app.cam, horde3d.Camera_ViewportWidthI, width)
-	horde3d.SetNodeParamI(app.cam, horde3d.Camera_ViewportHeightI, height)
+	app.cam.SetNodeParamI( horde3d.Camera_ViewportXI, 0)
+	app.cam.SetNodeParamI( horde3d.Camera_ViewportYI, 0)
+	app.cam.SetNodeParamI( horde3d.Camera_ViewportWidthI, width)
+	app.cam.SetNodeParamI( horde3d.Camera_ViewportHeightI, height)
 
 	// Set virtual camera parameters
 	horde3d.SetupCameraView(app.cam, 45.0, float32(width)/float32(height), 0.1, 1000.0)
@@ -368,10 +368,10 @@ func (app *Application) keyStateHandler() {
 	// ----------------
 
 	if app.keys[260] && !app.prevKeys[260] { // F3
-		if horde3d.H3DRes(horde3d.GetNodeParamI(app.cam, horde3d.Camera_PipeResI)) == app.hdrPipeRes {
-			horde3d.SetNodeParamI(app.cam, horde3d.Camera_PipeResI, int(app.forwardPipeRes))
+		if horde3d.H3DRes(app.cam.NodeParamI( horde3d.Camera_PipeResI)) == app.hdrPipeRes {
+			app.cam.SetNodeParamI( horde3d.Camera_PipeResI, int(app.forwardPipeRes))
 		} else {
-			horde3d.SetNodeParamI(app.cam, horde3d.Camera_PipeResI, int(app.hdrPipeRes))
+			app.cam.SetNodeParamI( horde3d.Camera_PipeResI, int(app.hdrPipeRes))
 		}
 	}
 
