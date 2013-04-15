@@ -47,7 +47,12 @@ func main() {
 		panic(sdl.GetError())
 	}
 
-	horde3d.Init()
+	if !horde3d.Init() {
+		fmt.Println("Error initializing Horde3D")
+		horde3d.DumpMessages()
+		return
+	}
+
 	//horde3d.SetOption(horde3d.Options_DebugViewMode, 1)
 	//horde3d.SetOption(horde3d.Options_WireframeMode, 1)
 	fmt.Println("Version: ", horde3d.VersionString())
