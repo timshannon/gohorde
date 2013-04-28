@@ -737,6 +737,19 @@ func prepSlice(slicePtr unsafe.Pointer, cArrayPtr unsafe.Pointer, length int) {
 	slcHead.Data = uintptr(cArrayPtr)
 }
 
+func (res H3DRes) MapUint8ResStream(elem int, elemIdx int, stream int, read bool, write bool, length int) ([]uint8, error) {
+	ptr := res.MapResStream(elem, elemIdx, stream, read, write)
+
+	if ptr == nil {
+		return nil, errors.New("Stream could not be mapped")
+	}
+
+	var slice []uint8
+	prepSlice(unsafe.Pointer(&slice), ptr, length)
+
+	return slice, nil
+}
+
 func (res H3DRes) MapUint16ResStream(elem int, elemIdx int, stream int, read bool, write bool, length int) ([]uint16, error) {
 	ptr := res.MapResStream(elem, elemIdx, stream, read, write)
 
