@@ -1,6 +1,13 @@
-Horde3D (www.horde3d.org) is a small open source 3D rendering engine. It is written in an effort to create a graphics engine that offers the stunning visual effects expected in next-generation games while at the same time being as lightweight and conceptually clean as possible. Horde3D has a simple and intuitive interface accessible from virtually any programming language and is particularly suitable for rendering large crowds of animated characters in next-generation quality.
+Horde3D (www.horde3d.org) is a small open source 3D rendering engine. 
+It is written in an effort to create a graphics engine that offers the 
+stunning visual effects expected in next-generation games while at the 
+same time being as lightweight and conceptually clean as possible. 
+Horde3D has a simple and intuitive interface accessible from virtually 
+any programming language and is particularly suitable for rendering large 
+crowds of animated characters in next-generation quality.
 
-This Go language library allows access to the Horde3D API with the Go programming language.
+This Go language library allows access to the Horde3D API with the 
+Go programming language.
 
 Quick Start
 Build Horde3D (instructions here)
