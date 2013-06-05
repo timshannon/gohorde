@@ -21,7 +21,7 @@
 package main
 
 import (
-	"code.google.com/p/gohorde/horde3d"
+	"bitbucket.org/tshannon/gohorde/horde3d"
 	"fmt"
 	"github.com/jteeuwen/glfw"
 	"os"
