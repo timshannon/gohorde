@@ -19,13 +19,13 @@
 //THE SOFTWARE.
 package main
 
-/* 
+/*
 SDL Example from http://horde3d.org/wiki/index.php5?title=Tutorial_-_Setup_Horde_with_SDL
 implemented in Go
 */
 
 import (
-	"code.google.com/p/gohorde/horde3d"
+	"bitbucket.org/tshannon/gohorde/horde3d"
 	"fmt"
 	"github.com/banthar/Go-SDL/sdl"
 )

@@ -21,7 +21,7 @@
 package main
 
 import (
-	"code.google.com/p/gohorde/horde3d"
+	"bitbucket.org/tshannon/gohorde/horde3d"
 	"fmt"
 	"github.com/jteeuwen/glfw"
 	"math"
@@ -330,7 +330,6 @@ func (app *Application) mainLoop(fps float32) {
 		float32(app.cam.NodeParamI(horde3d.Camera_ViewportHeightI))
 	ovLogo := []float32{ww - 0.4, 0.8, 0, 1, ww - 0.4, 1, 0, 0, ww, 1, 1, 0, ww, 0.8, 1, 1}
 	horde3d.ShowOverlays(ovLogo, 4, 1.0, 1.0, 1.0, 1.0, app.logoMatRes, 0)
-	horde3d.ShowText("test", 0.03, 0.24, 0.026, 1, 1, 1, app.fontMatRes)
 	// Render scene
 	horde3d.Render(app.cam)
 
@@ -351,10 +350,10 @@ func (app *Application) release() {
 
 func (app *Application) resize(width int, height int) {
 	// Resize viewport
-	app.cam.SetNodeParamI( horde3d.Camera_ViewportXI, 0)
-	app.cam.SetNodeParamI( horde3d.Camera_ViewportYI, 0)
-	app.cam.SetNodeParamI( horde3d.Camera_ViewportWidthI, width)
-	app.cam.SetNodeParamI( horde3d.Camera_ViewportHeightI, height)
+	app.cam.SetNodeParamI(horde3d.Camera_ViewportXI, 0)
+	app.cam.SetNodeParamI(horde3d.Camera_ViewportYI, 0)
+	app.cam.SetNodeParamI(horde3d.Camera_ViewportWidthI, width)
+	app.cam.SetNodeParamI(horde3d.Camera_ViewportHeightI, height)
 
 	// Set virtual camera parameters
 	horde3d.SetupCameraView(app.cam, 45.0, float32(width)/float32(height), 0.1, 1000.0)
@@ -368,10 +367,10 @@ func (app *Application) keyStateHandler() {
 	// ----------------
 
 	if app.keys[260] && !app.prevKeys[260] { // F3
-		if horde3d.H3DRes(app.cam.NodeParamI( horde3d.Camera_PipeResI)) == app.hdrPipeRes {
-			app.cam.SetNodeParamI( horde3d.Camera_PipeResI, int(app.forwardPipeRes))
+		if horde3d.H3DRes(app.cam.NodeParamI(horde3d.Camera_PipeResI)) == app.hdrPipeRes {
+			app.cam.SetNodeParamI(horde3d.Camera_PipeResI, int(app.forwardPipeRes))
 		} else {
-			app.cam.SetNodeParamI( horde3d.Camera_PipeResI, int(app.hdrPipeRes))
+			app.cam.SetNodeParamI(horde3d.Camera_PipeResI, int(app.hdrPipeRes))
 		}
 	}
 
