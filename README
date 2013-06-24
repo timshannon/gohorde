@@ -35,3 +35,7 @@ Then in your go code
 import "bitbucket.org/tshannon/gohorde/horde3d"
 
 Some examples using Go-SDL and Go-GLFW should be available in the repository.
+
+
+The branch "latest" contains the most recent updates from the horde3d svn, 
+and may contain api changes.
