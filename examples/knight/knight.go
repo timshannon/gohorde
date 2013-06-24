@@ -318,7 +318,7 @@ func (app *Application) mainLoop(fps float32) {
 	// Animate particle systems (several emitters in a group node)
 	cnt := horde3d.FindNodes(app.particleSys, "", horde3d.NodeTypes_Emitter)
 	for i := 0; i < cnt; i++ {
-		horde3d.AdvanceEmitterTime(horde3d.GetNodeFindResult(i), 1.0/app.curFps)
+		horde3d.UpdateEmitter(horde3d.GetNodeFindResult(i), 1.0/app.curFps)
 	}
 
 	// Set camera parameters

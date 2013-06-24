@@ -1071,8 +1071,8 @@ func (parent H3DNode) AddEmitterNode(name string, materialRes H3DRes, particleEf
 		C.H3DRes(particleEffectRes), C.int(maxParticleCount), C.int(respawnCount)))
 }
 
-func AdvanceEmitterTime(emitterNode H3DNode, timeDelta float32) {
-	C.h3dAdvanceEmitterTime(C.H3DNode(emitterNode), C.float(timeDelta))
+func UpdateEmitter(emitterNode H3DNode, timeDelta float32) {
+	C.h3dUpdateEmitter(C.H3DNode(emitterNode), C.float(timeDelta))
 }
 
 func HasEmitterFinished(emitterNode H3DNode) bool {

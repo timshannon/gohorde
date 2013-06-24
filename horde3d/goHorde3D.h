@@ -1500,7 +1500,7 @@ void h3dGetCameraProjMat( H3DNode cameraNode, float *projMat );
 H3DNode h3dAddEmitterNode( H3DNode parent, const char *name, H3DRes materialRes,
                                H3DRes particleEffectRes, int maxParticleCount, int respawnCount );
 
-/* Function: h3dAdvanceEmitterTime
+/* Function: h3dUpdateEmitter
 		Advances the time value of an Emitter node.
 	
 	Details:
@@ -1515,7 +1515,7 @@ H3DNode h3dAddEmitterNode( H3DNode parent, const char *name, H3DRes materialRes,
 	Returns:
 		nothing
 */
-void h3dAdvanceEmitterTime( H3DNode emitterNode, float timeDelta );
+void h3dUpdateEmitter( H3DNode emitterNode, float timeDelta );
 
 /* Function: h3dHasEmitterFinished
 		Checks if an Emitter node is still alive.
