@@ -9,22 +9,9 @@ crowds of animated characters in next-generation quality.
 This Go language library allows access to the Horde3D API with the 
 Go programming language.
 
-Quick Start
-Build Horde3D (instructions here)
-
-Run
-
-go get code.google.com/p/gohorde/horde3d
-
-Then in your go code
-
-import "bitbucket.org/tshannon/gohorde/horde3d"
-
-Some examples using Go-SDL and Go-GLFW should be available in the repository.
-
 
 Quick Start
-Build Horde3D (instructions here)
+Build Horde3D
 
 Run
 
